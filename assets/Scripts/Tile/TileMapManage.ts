@@ -1,6 +1,6 @@
 import { Component, _decorator } from "cc";
-import { DataManagerInstance } from "../../RunTime/DataManage";
-import { loadDir } from "../../RunTime/ResourceManage";
+import { DataManagerInstance } from "../../Runtime/DataManage";
+import { loadDir } from "../../Runtime/ResourceManage";
 import { createUINode, randomByRange } from "../../Utils";
 import { TileManage } from "./TileManage";
 const { ccclass, property } = _decorator;

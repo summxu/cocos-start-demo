@@ -1,6 +1,6 @@
 import { Component, Node, _decorator } from "cc";
 import levels from "../../Levels";
-import { DataManagerInstance } from "../../RunTime/DataManage";
+import { DataManagerInstance } from "../../Runtime/DataManage";
 import { createUINode } from "../../Utils";
 import { TILE_HEIGHT, TILE_WIDTH } from "../Tile/TileManage";
 import { TileMapManage } from "../Tile/TileMapManage";
