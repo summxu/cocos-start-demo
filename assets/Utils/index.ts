@@ -1,7 +1,7 @@
 /*
  * @Author: Chenxu
  * @Date: 2023-06-17 08:26:59
- * @LastEditTime: 2023-06-17 08:31:12
+ * @LastEditTime: 2023-06-17 11:18:04
  * @Msg: Nothing
  */
 import { Node, UITransform, Layers } from "cc";
@@ -13,3 +13,6 @@ export const createUINode = (name: string = "") => {
   node.layer = 1 << Layers.nameToLayer("UI_2D");
   return node;
 };
+
+export const randomByRange = (start: number, end: number) =>
+  Math.floor(start + (end - start) * Math.random());

@@ -1,6 +1,7 @@
-import { Component, resources, SpriteFrame, _decorator } from "cc";
+import { Component, _decorator } from "cc";
 import { DataManagerInstance } from "../../RunTime/DataManage";
-import { createUINode } from "../../Utils";
+import { loadDir } from "../../RunTime/ResourceManage";
+import { createUINode, randomByRange } from "../../Utils";
 import { TileManage } from "./TileManage";
 const { ccclass, property } = _decorator;
 
@@ -9,15 +10,26 @@ export class TileMapManage extends Component {
   start() {}
 
   async init() {
-    const tileImgs = await this.loadTileImgs();
+    const tileImgs = await loadDir("texture/tile/tile");
 
     const { mapInfo } = DataManagerInstance;
     // 遍历所有的瓦片图数据
     mapInfo.forEach((item, col) => {
       item.forEach((element, row) => {
         if (element.src && element.type) {
+          // 随机三种不同材质
+          if (
+            (element.type === "FLOOR" ||
+              element.type === "WALL_ROW" ||
+              element.type === "WALL_COLUMN") &&
+            !(col % 2) &&
+            !(row % 2) // 偶数才会随机不同材质
+          ) {
+            element.src = element.src + randomByRange(0, 4);
+          }
+
           // 找到每一个应该渲染的瓦片描述
-          const SpriteFrame =
+          let SpriteFrame =
             tileImgs.find((item) => item.name === `tile (${element.src})`) ||
             tileImgs[0];
 
@@ -30,22 +42,6 @@ export class TileMapManage extends Component {
           node.setParent(this.node);
         }
       });
-    });
-  }
-
-  loadTileImgs() {
-    return new Promise<SpriteFrame[]>((resolve, reject) => {
-      resources.loadDir(
-        "texture/tile/tile",
-        SpriteFrame,
-        (err, spriteFrames) => {
-          if (err) {
-            reject(err);
-            return;
-          }
-          resolve(spriteFrames);
-        }
-      );
     });
   }
 }
