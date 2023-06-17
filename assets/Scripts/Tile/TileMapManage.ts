@@ -1,5 +1,5 @@
 import { Component, resources, SpriteFrame, _decorator } from "cc";
-import levels from "../../Levels";
+import { DataManagerInstance } from "../../RunTime/DataManage";
 import { createUINode } from "../../Utils";
 import { TileManage } from "./TileManage";
 const { ccclass, property } = _decorator;
@@ -8,13 +8,11 @@ const { ccclass, property } = _decorator;
 export class TileMapManage extends Component {
   start() {}
 
-  update(deltaTime: number) {}
-
   async init() {
     const tileImgs = await this.loadTileImgs();
-    // 便利所有的瓦片图位置
-    const level = 1;
-    const { mapInfo } = levels[`level${level}`];
+
+    const { mapInfo } = DataManagerInstance;
+    // 遍历所有的瓦片图数据
     mapInfo.forEach((item, col) => {
       item.forEach((element, row) => {
         if (element.src && element.type) {

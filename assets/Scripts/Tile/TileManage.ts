@@ -5,7 +5,6 @@
  * @Msg: Nothing
  */
 import { Component, Sprite, SpriteFrame, UITransform, _decorator } from "cc";
-import { createUINode } from "../../Utils";
 const { ccclass, property } = _decorator;
 
 export const TILE_WIDTH = 55;
@@ -14,8 +13,6 @@ export const TILE_HEIGHT = 55;
 @ccclass("TileManage")
 export class TileManage extends Component {
   start() {}
-
-  update(deltaTime: number) {}
 
   init(spriteFrame: SpriteFrame, col: number, row: number) {
     // 给node添加一个 sprite
