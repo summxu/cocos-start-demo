@@ -1,10 +1,12 @@
 /*
  * @Author: Chenxu
  * @Date: 2023-06-17 13:14:51
- * @LastEditTime: 2023-06-17 22:26:35
+ * @LastEditTime: 2023-06-17 23:04:43
  * @Msg: 创建一个单例的事件中心
  * 实际上实践中心就是一个 Map，创建好之后可以整个都绑定不同的 scenes
  * 事件管理中心就是维护这个map的基本方法
+ * 之所以这么做而不是直接从按钮绑定方法的原因是解耦
+ * 在脚本执行的时候往map里绑定方法就可以
  */
 
 import Singleton from "../Base/Singleton";
@@ -42,7 +44,7 @@ export default class EventManage extends Singleton {
   emit(eventName: string, ...params: unknown[]) {
     if (this.eventDic.has(eventName)) {
       this.eventDic.get(eventName).forEach(({ func, ctx }) => {
-        ctx ? func(...params).apply(ctx) : func(...params);
+        ctx ? func.apply(ctx, params) : func(...params);
       });
     }
   }

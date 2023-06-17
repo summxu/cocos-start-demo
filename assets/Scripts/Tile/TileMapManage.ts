@@ -1,5 +1,5 @@
 import { Component, _decorator } from "cc";
-import { DataManagerInstance } from "../../Runtime/DataManage";
+import DataManager from "../../Runtime/DataManage";
 import { loadDir } from "../../Runtime/ResourceManage";
 import { createUINode, randomByRange } from "../../Utils";
 import { TileManage } from "./TileManage";
@@ -12,7 +12,7 @@ export class TileMapManage extends Component {
   async init() {
     const tileImgs = await loadDir("texture/tile/tile");
 
-    const { mapInfo } = DataManagerInstance;
+    const { mapInfo } = DataManager.Instance;
     // 遍历所有的瓦片图数据
     mapInfo.forEach((item, col) => {
       item.forEach((element, row) => {

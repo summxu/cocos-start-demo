@@ -1,6 +1,8 @@
 import { Component, Node, _decorator } from "cc";
+import { LEVEL_ENUM } from "../../Enum";
 import levels from "../../Levels";
-import { DataManagerInstance } from "../../Runtime/DataManage";
+import DataManager from "../../Runtime/DataManage";
+import EventManage from "../../Runtime/EventManage";
 import { createUINode } from "../../Utils";
 import { TILE_HEIGHT, TILE_WIDTH } from "../Tile/TileManage";
 import { TileMapManage } from "../Tile/TileMapManage";
@@ -10,6 +12,14 @@ const { ccclass, property } = _decorator;
 export class BattleManage extends Component {
   stage: Node;
 
+  onLoad() {
+    EventManage.Instance.on(LEVEL_ENUM.NEXT_LEVEL, this.nextLevel, this);
+  }
+
+  onDestroy() {
+    EventManage.Instance.off(LEVEL_ENUM.NEXT_LEVEL, this.nextLevel);
+  }
+
   start() {
     this.generateStage();
     this.initLevel();
@@ -17,13 +27,18 @@ export class BattleManage extends Component {
 
   initLevel() {
     // 拿到关卡数据，往数据中心存储
-    const level = 1;
-    const { mapInfo } = levels[`level${level}`];
-    DataManagerInstance.mapInfo = mapInfo;
-    DataManagerInstance.mapRowCount = mapInfo.length || 0;
-    DataManagerInstance.mapColCount = mapInfo[0].length || 0; // 列数
+    const { mapInfo } = levels[`level${DataManager.Instance.levelIndex}`];
+    DataManager.Instance.mapInfo = mapInfo;
+    DataManager.Instance.mapRowCount = mapInfo.length || 0;
+    DataManager.Instance.mapColCount = mapInfo[0].length || 0; // 列数
 
     this.generateTileMap();
+  }
+
+  // 下一关执行的方法
+  nextLevel() {
+    DataManager.Instance.levelIndex++;
+    this.initLevel();
   }
 
   generateStage() {
@@ -45,7 +60,7 @@ export class BattleManage extends Component {
 
   // 设置舞台位置适配不同屏幕大小
   adaptPositon() {
-    const { mapRowCount, mapColCount } = DataManagerInstance;
+    const { mapRowCount, mapColCount } = DataManager.Instance;
     const disX = (TILE_WIDTH * mapColCount) / 2 - 25;
     const disY = (TILE_HEIGHT * mapRowCount) / 2 + 80;
     this.stage.setPosition(-disX, disY);

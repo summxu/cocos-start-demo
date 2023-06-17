@@ -1,9 +1,15 @@
+import Singleton from "../Base/Singleton";
 import { ITile } from "../Levels";
 
-class DataManager {
+class DataManager extends Singleton {
+  static get Instance() {
+    return super.GetInstance<DataManager>();
+  }
+
   mapInfo: Array<Array<ITile>>;
-  mapRowCount: number;
-  mapColCount: number;
+  mapRowCount: number = 0;
+  mapColCount: number = 0;
+  levelIndex: number = 1;
 }
 
-export const DataManagerInstance = new DataManager();
+export default DataManager;
