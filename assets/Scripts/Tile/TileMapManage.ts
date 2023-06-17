@@ -1,17 +1,9 @@
-import {
-  _decorator,
-  Component,
-  Node,
-  resources,
-  SpriteFrame,
-  Sprite,
-  Layers,
-  UITransform,
-} from "cc";
+import { Component, resources, SpriteFrame, _decorator } from "cc";
 import levels from "../../Levels";
+import { createUINode } from "../../Utils";
+import { TileManage } from "./TileManage";
 const { ccclass, property } = _decorator;
-export const TILE_WIDTH = 55;
-export const TILE_HEIGHT = 55;
+
 @ccclass("TileMapManage")
 export class TileMapManage extends Component {
   start() {}
@@ -27,20 +19,16 @@ export class TileMapManage extends Component {
       item.forEach((element, row) => {
         if (element.src && element.type) {
           // 找到每一个应该渲染的瓦片描述
-          const tileImg =
+          const SpriteFrame =
             tileImgs.find((item) => item.name === `tile (${element.src})`) ||
             tileImgs[0];
 
-          // 创建一个 node
-          const node = new Node();
-          const sprite = node.addComponent(Sprite);
-          sprite.spriteFrame = tileImg;
+          // 创建每一个 瓦片图节点
+          const node = createUINode("Tile");
+          const tileManage = node.addComponent(TileManage);
+          // 初始化 tile节点管理脚本
+          tileManage.init(SpriteFrame, col, row);
 
-          const transform = node.addComponent(UITransform);
-          transform.setContentSize(TILE_WIDTH, TILE_HEIGHT);
-
-          node.layer = 1 << Layers.nameToLayer("UI_2D");
-          node.setPosition(col * TILE_WIDTH, -row * TILE_HEIGHT);
           node.setParent(this.node);
         }
       });
