@@ -1,7 +1,7 @@
 /*
  * @Author: Chenxu
  * @Date: 2023-06-16 21:13:44
- * @LastEditTime: 2023-06-17 22:39:24
+ * @LastEditTime: 2023-06-18 21:47:05
  * @Msg: Nothing
  */
 
@@ -21,6 +21,16 @@ export enum TILE_TYPE_ENUM {
   FLOOR = "FLOOR",
 }
 
-export enum LEVEL_ENUM {
+export enum EVENT_ENUM {
   NEXT_LEVEL = "NEXT_LEVEL",
+  PLAYER_CTRL = "PLAYER_CTRL",
+}
+
+export enum PLAYER_CTRL_ENUM {
+  TOP = "TOP",
+  LEFT = "LEFT",
+  RIGHT = "RIGHT",
+  BOTTOM = "BOTTOM",
+  TURNLEFT = "TURNLEFT",
+  TURNRIGHT = "TURNRIGHT",
 }

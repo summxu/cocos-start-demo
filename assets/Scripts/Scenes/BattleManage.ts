@@ -1,5 +1,5 @@
 import { color, Component, Node, Sprite, UITransform, _decorator } from "cc";
-import { LEVEL_ENUM } from "../../Enum";
+import { EVENT_ENUM, PLAYER_CTRL_ENUM } from "../../Enum";
 import levels from "../../Levels";
 import DataManager from "../../Runtime/DataManage";
 import EventManage from "../../Runtime/EventManage";
@@ -14,11 +14,11 @@ export class BattleManage extends Component {
   stage: Node;
 
   onLoad() {
-    EventManage.Instance.on(LEVEL_ENUM.NEXT_LEVEL, this.nextLevel, this);
+    EventManage.Instance.on(EVENT_ENUM.NEXT_LEVEL, this.nextLevel, this);
   }
 
   onDestroy() {
-    EventManage.Instance.off(LEVEL_ENUM.NEXT_LEVEL, this.nextLevel);
+    EventManage.Instance.off(EVENT_ENUM.NEXT_LEVEL, this.nextLevel);
   }
 
   start() {
