@@ -10,6 +10,12 @@ class DataManager extends Singleton {
   mapRowCount: number = 0;
   mapColCount: number = 0;
   levelIndex: number = 1;
+
+  reset() {
+    this.mapInfo = [];
+    this.mapRowCount = 0;
+    this.mapColCount = 0;
+  }
 }
 
 export default DataManager;

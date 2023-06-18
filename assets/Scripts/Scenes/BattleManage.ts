@@ -1,4 +1,4 @@
-import { Component, Node, _decorator } from "cc";
+import { color, Component, Node, Sprite, UITransform, _decorator } from "cc";
 import { LEVEL_ENUM } from "../../Enum";
 import levels from "../../Levels";
 import DataManager from "../../Runtime/DataManage";
@@ -26,6 +26,7 @@ export class BattleManage extends Component {
   }
 
   initLevel() {
+    this.clearLevel();
     // 拿到关卡数据，往数据中心存储
     const { mapInfo } = levels[`level${DataManager.Instance.levelIndex}`];
     DataManager.Instance.mapInfo = mapInfo;
@@ -39,6 +40,12 @@ export class BattleManage extends Component {
   nextLevel() {
     DataManager.Instance.levelIndex++;
     this.initLevel();
+  }
+
+  // 清空舞台的所有子元素
+  clearLevel() {
+    this.stage.destroyAllChildren();
+    DataManager.Instance.reset();
   }
 
   generateStage() {
@@ -61,7 +68,7 @@ export class BattleManage extends Component {
   // 设置舞台位置适配不同屏幕大小
   adaptPositon() {
     const { mapRowCount, mapColCount } = DataManager.Instance;
-    const disX = (TILE_WIDTH * mapColCount) / 2 - 25;
+    const disX = (TILE_WIDTH * mapColCount) / 2;
     const disY = (TILE_HEIGHT * mapRowCount) / 2 + 80;
     this.stage.setPosition(-disX, disY);
   }
