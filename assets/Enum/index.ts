@@ -1,7 +1,7 @@
 /*
  * @Author: Chenxu
  * @Date: 2023-06-16 21:13:44
- * @LastEditTime: 2023-06-18 21:47:05
+ * @LastEditTime: 2023-06-19 22:12:18
  * @Msg: Nothing
  */
 
@@ -33,4 +33,14 @@ export enum PLAYER_CTRL_ENUM {
   BOTTOM = "BOTTOM",
   TURNLEFT = "TURNLEFT",
   TURNRIGHT = "TURNRIGHT",
+}
+
+export enum FSM_PARAMS_TYPE_ENUM {
+  TRIGGER = "TRIGGER",
+  NUMBER = "NUMBER",
+}
+
+export enum PARAM_NAME_ENUM {
+  IDLE = "IDLE",
+  TURNLEFT = "TURNLEFT",
 }

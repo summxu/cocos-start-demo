@@ -1,7 +1,7 @@
 /*
  * @Author: Chenxu
  * @Date: 2023-06-18 15:20:57
- * @LastEditTime: 2023-06-18 22:59:09
+ * @LastEditTime: 2023-06-19 23:06:04
  * @Msg: https://docs.cocos.com/creator/manual/zh/animation/use-animation-curve.html
  */
 import {
@@ -14,10 +14,11 @@ import {
   UITransform,
   _decorator,
 } from "cc";
-import { EVENT_ENUM, PLAYER_CTRL_ENUM } from "../../Enum";
+import { EVENT_ENUM, PARAM_NAME_ENUM, PLAYER_CTRL_ENUM } from "../../Enum";
 import EventManage from "../../Runtime/EventManage";
 import { loadDir } from "../../Runtime/ResourceManage";
 import { TILE_HEIGHT, TILE_WIDTH } from "../Tile/TileManage";
+import { PlayerStateMachine } from "./PlayerStateMachine";
 const { ccclass, property } = _decorator;
 
 const ANIMATION_SPEED = 1 / 8; // 帧率，每秒8帧，代表速度
@@ -26,13 +27,16 @@ const ANIMATION_SPEED = 1 / 8; // 帧率，每秒8帧，代表速度
 export class PlayerManage extends Component {
   targetY: number = 0;
   targetX: number = 0;
-
+  fsm: PlayerStateMachine = null;
   x: number = 0;
   y: number = 0; // x,y表示当前位置，需要实时移动才能有动画
   private readonly speed: number = 1 / 10; // 每帧移动的距离，表示速度
 
   async init() {
-    await this.render();
+    // 初始化动画状态机
+    this.fsm = this.addComponent(PlayerStateMachine);
+    this.fsm.init();
+    // await this.render();
   }
 
   onLoad() {
@@ -76,6 +80,7 @@ export class PlayerManage extends Component {
     }
   }
 
+  // 按钮Click实际走的方法
   move(direct: PLAYER_CTRL_ENUM) {
     if (direct === PLAYER_CTRL_ENUM.BOTTOM) {
       this.targetY++;
@@ -85,6 +90,8 @@ export class PlayerManage extends Component {
       this.targetX--;
     } else if (direct === PLAYER_CTRL_ENUM.RIGHT) {
       this.targetX++;
+    } else if (direct === PLAYER_CTRL_ENUM.TURNLEFT) {
+      this.fsm.setParams(PARAM_NAME_ENUM.TURNLEFT, true);
     }
   }
 

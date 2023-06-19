@@ -1,0 +1,98 @@
+/*
+ * @Author: Chenxu
+ * @Date: 2023-06-19 20:53:39
+ * @LastEditTime: 2023-06-19 23:07:13
+ * @Msg: 动画有限状态机FSM
+ * 是一组动画，因为参数的改变，根据条件Transtion来指定到达下一个动画
+ */
+import { _decorator, Component, Node, AnimationClip } from "cc";
+import State from "../../Base/State";
+import { FSM_PARAMS_TYPE_ENUM, PARAM_NAME_ENUM } from "../../Enum";
+const { ccclass, property } = _decorator;
+
+type ParamsValueType = boolean | number;
+
+interface IParamsValue {
+  type: FSM_PARAMS_TYPE_ENUM; // 有限状态机的参数(变量)有可能是 触发器/数字
+  value: ParamsValueType;
+}
+
+export const getInitParamsTrigger = () => {
+  return {
+    type: FSM_PARAMS_TYPE_ENUM.TRIGGER,
+    value: false,
+  };
+};
+
+@ccclass("PlayerStateMacihne")
+export class PlayerStateMachine extends Component {
+  // 定义当前的状态机，通过切换这个来播放动画
+  private _currentState: State = new State(
+    this,
+    "texture/player/idle/top",
+    AnimationClip.WrapMode.Loop
+  );
+  // 定义一个参数(变量)列表，来指定步骤改变状态
+  params: Map<PARAM_NAME_ENUM, IParamsValue> = new Map();
+  // 状态机列表，value是一个的动画 state 类
+  stateMachines: Map<PARAM_NAME_ENUM, State> = new Map();
+
+  set currentState(newState) {
+    console.log("state被重新设置了");
+    this._currentState = newState;
+  }
+
+  get currentState() {
+    return this._currentState;
+  }
+
+  getParams(paramsName: PARAM_NAME_ENUM) {
+    if (this.params.has(paramsName)) {
+      return this.params.get(paramsName).value;
+    }
+  }
+
+  setParams(paramsName: PARAM_NAME_ENUM, value: ParamsValueType) {
+    if (this.params.has(paramsName)) {
+      this.params.get(paramsName).value = value;
+      // 改变参数列表的 trigger 的时候，应该要改变 state
+      this.run();
+    }
+  }
+
+  init() {
+    this.initParams();
+    this.initStateMachines();
+  }
+
+  // 初始化参数(变量)列表
+  initParams() {
+    this.params.set(PARAM_NAME_ENUM.IDLE, getInitParamsTrigger());
+    this.params.set(PARAM_NAME_ENUM.TURNLEFT, getInitParamsTrigger());
+  }
+
+  // 初始化状态机列表
+  initStateMachines() {
+    this.stateMachines.set(PARAM_NAME_ENUM.IDLE, this.currentState);
+    this.stateMachines.set(
+      PARAM_NAME_ENUM.TURNLEFT,
+      new State(this, "texture/player/turnleft/top")
+    );
+  }
+
+  // 设置 transtation,当参数改变，修改当前的state
+  run() {
+    switch (this.currentState) {
+      case this.stateMachines.get(PARAM_NAME_ENUM.IDLE):
+      case this.stateMachines.get(PARAM_NAME_ENUM.TURNLEFT):
+        // 检查params的trigger value，是否为 true
+        if (this.getParams(PARAM_NAME_ENUM.IDLE)) {
+          this.currentState = this.stateMachines.get(PARAM_NAME_ENUM.IDLE);
+        }
+
+        if (this.getParams(PARAM_NAME_ENUM.TURNLEFT)) {
+          this.currentState = this.stateMachines.get(PARAM_NAME_ENUM.TURNLEFT);
+        }
+    }
+  }
+}
