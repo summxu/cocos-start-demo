@@ -1,15 +1,9 @@
 /*
- * @Author: Chenxu
- * @Date: 2023-06-18 15:20:57
- * @LastEditTime: 2023-06-19 23:06:04
- * @Msg: https://docs.cocos.com/creator/manual/zh/animation/use-animation-curve.html
- */
-import {
-  Component,
-  Sprite,
-  UITransform,
-  _decorator
-} from "cc";
+* @Author: Chenxu
+* @Date: 2023-06-20 14:58:23
+* @Last Modified time: 2023-06-20 14:58:23
+*/
+import { Component, Sprite, UITransform, _decorator } from "cc";
 import { EVENT_ENUM, PARAM_NAME_ENUM, PLAYER_CTRL_ENUM } from "../../Enum";
 import EventManage from "../../Runtime/EventManage";
 import { TILE_HEIGHT, TILE_WIDTH } from "../Tile/TileManage";

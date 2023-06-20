@@ -3,20 +3,21 @@
  * @Date: 2023-06-19 21:08:00
  * @LastEditTime: 2023-06-19 22:24:36
  * @Msg:
- * 1. 需要知道animationClip
+ * 1. 需要知道 animationClip
  * 2. 需要播放动画的能力 animationComponent
+ * 3. 这是一个动态动画 state
  */
 
 import { AnimationClip, Sprite, animation } from "cc";
-import { PlayerStateMachine } from "../Scripts/Player/PlayerStateMachine";
 import { loadDir } from "../RunTime/ResourceManage";
+import { StateMachine } from "./StateMachine";
 
 const ANIMATION_SPEED = 1 / 8; // 帧率，每秒8帧，代表速度
 
 export default class State {
   private animationClip: AnimationClip
   constructor(
-    private fsm: PlayerStateMachine,
+    private fsm: StateMachine,
     private path: string,
     private wrapMode: AnimationClip.WrapMode = AnimationClip.WrapMode.Normal
   ) {
