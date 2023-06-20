@@ -45,6 +45,7 @@ export default class State {
     // 整个动画剪辑的周期,单位（秒）
     this.animationClip.duration = spriteFrames.length * ANIMATION_SPEED;
     this.animationClip.wrapMode = this.wrapMode;
+    this.animationClip.name = this.path
     // 最后将轨道添加到动画剪辑以应用
     this.animationClip.addTrack(track);
   }
