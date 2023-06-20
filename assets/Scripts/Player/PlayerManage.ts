@@ -4,7 +4,7 @@
 * @Last Modified time: 2023-06-20 14:58:23
 */
 import { Component, Sprite, UITransform, _decorator } from "cc";
-import { EVENT_ENUM, PARAM_NAME_ENUM, PLAYER_CTRL_ENUM } from "../../Enum";
+import { DIRECTION_ENUM, DIRECTION_ORDER_ENUM, ENITIY_STATE_ENUM, EVENT_ENUM, PARAM_NAME_ENUM, PLAYER_CTRL_ENUM } from "../../Enum";
 import EventManage from "../../Runtime/EventManage";
 import { TILE_HEIGHT, TILE_WIDTH } from "../Tile/TileManage";
 import { PlayerStateMachine } from "./PlayerStateMachine";
@@ -19,6 +19,28 @@ export class PlayerManage extends Component {
   y: number = 0; // x,y表示当前位置，需要实时移动才能有动画
   private readonly speed: number = 1 / 10; // 每帧移动的距离，表示速度
 
+  // 设置人物的方向和动画状态，数据驱动视图
+  private _direction: DIRECTION_ENUM
+  private _state: ENITIY_STATE_ENUM
+
+  get direction() {
+    return this._direction
+  }
+
+  set direction(newState) {
+    this._direction = newState
+    this.fsm.setParams(PARAM_NAME_ENUM.DIRECTION, DIRECTION_ORDER_ENUM[this._direction]);
+  }
+
+  get state() {
+    return this._state
+  }
+
+  set state(newState) {
+    this._state = newState
+    this.fsm.setParams(this._state, true);
+  }
+
   async init() {
     // 创建人物 Sprite
     await this.render();
@@ -26,7 +48,7 @@ export class PlayerManage extends Component {
     this.fsm = this.addComponent(PlayerStateMachine);
     await this.fsm.init(); // 先加载完动画资源
     // 初始化状态机的默认状态
-    this.fsm.setParams(PARAM_NAME_ENUM.IDLE, true)
+    this.state = ENITIY_STATE_ENUM.IDLE
   }
 
   onLoad() {
@@ -81,7 +103,7 @@ export class PlayerManage extends Component {
     } else if (direct === PLAYER_CTRL_ENUM.RIGHT) {
       this.targetX++;
     } else if (direct === PLAYER_CTRL_ENUM.TURNLEFT) {
-      this.fsm.setParams(PARAM_NAME_ENUM.TURNLEFT, true);
+      this.state = ENITIY_STATE_ENUM.TURNLEFT
     }
   }
 

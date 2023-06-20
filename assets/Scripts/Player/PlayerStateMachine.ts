@@ -3,18 +3,11 @@
  * @Date: 2023-06-19 20:53:39
  * @LastEditTime: 2023-06-19 23:07:13
  */
-import { Animation, AnimationClip, SpriteFrame, _decorator } from 'cc'
+import { Animation, AnimationClip, _decorator } from 'cc'
 import State from '../../Base/State'
-import { StateMachine } from '../../Base/StateMachine'
-import { FSM_PARAMS_TYPE_ENUM, PARAM_NAME_ENUM } from '../../Enum'
+import { StateMachine, getInitParamsNumebr, getInitParamsTrigger } from '../../Base/StateMachine'
+import { PARAM_NAME_ENUM } from '../../Enum'
 const { ccclass, property } = _decorator
-
-export const getInitParamsTrigger = () => {
-  return {
-    type: FSM_PARAMS_TYPE_ENUM.TRIGGER,
-    value: false,
-  }
-}
 
 @ccclass('PlayerStateMachine')
 export class PlayerStateMachine extends StateMachine {
@@ -32,6 +25,7 @@ export class PlayerStateMachine extends StateMachine {
   initParams() {
     this.params.set(PARAM_NAME_ENUM.IDLE, getInitParamsTrigger())
     this.params.set(PARAM_NAME_ENUM.TURNLEFT, getInitParamsTrigger())
+    this.params.set(PARAM_NAME_ENUM.DIRECTION, getInitParamsNumebr())
   }
 
   // 初始化状态机列表

@@ -43,4 +43,25 @@ export enum FSM_PARAMS_TYPE_ENUM {
 export enum PARAM_NAME_ENUM {
   IDLE = "IDLE",
   TURNLEFT = "TURNLEFT",
+  DIRECTION = "DIRECTION"
+}
+
+export enum DIRECTION_ENUM {
+  TOP = 'TOP',
+  RIGHT = 'RIGHT',
+  BOTTOM = 'BOTTOM',
+  LEFT = 'LEFT'
+}
+
+// ENITIY_STATE_ENUM 表示角色的自身状态，除此之外还有方向状态，和 PARAM_NAME_ENUM 是不一致的
+export enum ENITIY_STATE_ENUM {
+  IDLE = "IDLE",
+  TURNLEFT = "TURNLEFT",
+}
+
+export enum DIRECTION_ORDER_ENUM {
+  TOP = 0,
+  RIGHT = 1,
+  BOTTOM = 2,
+  LEFT = 3
 }
