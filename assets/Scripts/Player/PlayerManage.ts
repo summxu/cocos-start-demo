@@ -5,14 +5,13 @@
  * @Msg: https://docs.cocos.com/creator/manual/zh/animation/use-animation-curve.html
  */
 import {
-  animation,
   Animation,
   AnimationClip,
   Component,
-  Event,
   Sprite,
   UITransform,
   _decorator,
+  animation
 } from "cc";
 import { EVENT_ENUM, PARAM_NAME_ENUM, PLAYER_CTRL_ENUM } from "../../Enum";
 import EventManage from "../../Runtime/EventManage";

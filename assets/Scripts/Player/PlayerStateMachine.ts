@@ -59,7 +59,6 @@ export class PlayerStateMachine extends Component {
   init() {
     this.initParams()
     this.initStateMachines()
-    this.params.set
   }
 
   // 初始化参数(变量)列表
