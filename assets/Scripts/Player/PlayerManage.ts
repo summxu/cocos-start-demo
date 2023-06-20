@@ -5,22 +5,16 @@
  * @Msg: https://docs.cocos.com/creator/manual/zh/animation/use-animation-curve.html
  */
 import {
-  Animation,
-  AnimationClip,
   Component,
   Sprite,
   UITransform,
-  _decorator,
-  animation
+  _decorator
 } from "cc";
 import { EVENT_ENUM, PARAM_NAME_ENUM, PLAYER_CTRL_ENUM } from "../../Enum";
 import EventManage from "../../Runtime/EventManage";
-import { loadDir } from "../../Runtime/ResourceManage";
 import { TILE_HEIGHT, TILE_WIDTH } from "../Tile/TileManage";
 import { PlayerStateMachine } from "./PlayerStateMachine";
 const { ccclass, property } = _decorator;
-
-const ANIMATION_SPEED = 1 / 8; // 帧率，每秒8帧，代表速度
 
 @ccclass("PlayerManage")
 export class PlayerManage extends Component {
@@ -32,10 +26,13 @@ export class PlayerManage extends Component {
   private readonly speed: number = 1 / 10; // 每帧移动的距离，表示速度
 
   async init() {
+    // 创建人物 Sprite
+    await this.render();
     // 初始化动画状态机
     this.fsm = this.addComponent(PlayerStateMachine);
-    this.fsm.init();
-    // await this.render();
+    await this.fsm.init(); // 先加载完动画资源
+    // 初始化状态机的默认状态
+    this.fsm.setParams(PARAM_NAME_ENUM.IDLE, true)
   }
 
   onLoad() {
@@ -100,34 +97,5 @@ export class PlayerManage extends Component {
 
     const transform = this.getComponent(UITransform);
     transform.setContentSize(TILE_WIDTH * 4, TILE_HEIGHT * 4);
-
-    // 为这个node添加一个animation
-    const animationComponent = this.addComponent(Animation);
-
-    // 创建一个animationClip，然后绑定到animationComponent上
-    const animationClip = new AnimationClip();
-
-    // 创建一个对象轨道
-    const track = new animation.ObjectTrack();
-    // 指定轨道路径，就是指定哪个对象的哪个属性去做动画
-    track.path = new animation.TrackPath()
-      .toComponent(Sprite)
-      .toProperty("spriteFrame");
-
-    const spriteFrames = await loadDir("texture/player/idle/top");
-
-    // 指定唯一的通道关键帧，指定每帧需要显示什么 spriteFrames
-    track.channel.curve.assignSorted(
-      spriteFrames.map((item, index) => [index * ANIMATION_SPEED, item])
-    );
-
-    // 整个动画剪辑的周期,单位（秒）
-    animationClip.duration = spriteFrames.length * ANIMATION_SPEED;
-    animationClip.wrapMode = AnimationClip.WrapMode.Loop;
-    // 最后将轨道添加到动画剪辑以应用
-    animationClip.addTrack(track);
-
-    animationComponent.defaultClip = animationClip;
-    animationComponent.play();
   }
 }

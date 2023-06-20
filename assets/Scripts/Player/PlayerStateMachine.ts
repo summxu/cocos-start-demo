@@ -5,7 +5,7 @@
  * @Msg: 动画有限状态机FSM
  * 是一组动画，因为参数的改变，根据条件Transtion来指定到达下一个动画
  */
-import { _decorator, Component, Node, AnimationClip } from 'cc'
+import { Animation, AnimationClip, Component, SpriteFrame, _decorator } from 'cc'
 import State from '../../Base/State'
 import { FSM_PARAMS_TYPE_ENUM, PARAM_NAME_ENUM } from '../../Enum'
 const { ccclass, property } = _decorator
@@ -26,16 +26,21 @@ export const getInitParamsTrigger = () => {
 
 @ccclass('PlayerStateMacihne')
 export class PlayerStateMachine extends Component {
+  animationComponent: Animation = null
+  // 创建资源加载的 PromiseAll
+  waitingList: Promise<SpriteFrame[]>[] = []
   // 定义当前的状态机，通过切换这个来播放动画
-  private _currentState: State = new State(this, 'texture/player/idle/top', AnimationClip.WrapMode.Loop)
+  private _currentState: State = null
   // 定义一个参数(变量)列表，来指定步骤改变状态
   params: Map<PARAM_NAME_ENUM, IParamsValue> = new Map()
   // 状态机列表，value是一个的动画 state 类
   stateMachines: Map<PARAM_NAME_ENUM, State> = new Map()
 
   set currentState(newState) {
-    console.log('state被重新设置了')
+    console.log('state被重新设置了', newState)
     this._currentState = newState
+    // 执行每个state的run方法，会加载一次state动画
+    this._currentState.run()
   }
 
   get currentState() {
@@ -56,9 +61,12 @@ export class PlayerStateMachine extends Component {
     }
   }
 
-  init() {
+  async init() {
     this.initParams()
     this.initStateMachines()
+    await Promise.all(this.waitingList) // 这里用于加载完动画资源的判断
+    // 为这个node添加一个animation组件
+    this.animationComponent = this.addComponent(Animation);
   }
 
   // 初始化参数(变量)列表
@@ -69,7 +77,7 @@ export class PlayerStateMachine extends Component {
 
   // 初始化状态机列表
   initStateMachines() {
-    this.stateMachines.set(PARAM_NAME_ENUM.IDLE, this.currentState)
+    this.stateMachines.set(PARAM_NAME_ENUM.IDLE, new State(this, 'texture/player/idle/top', AnimationClip.WrapMode.Loop))
     this.stateMachines.set(PARAM_NAME_ENUM.TURNLEFT, new State(this, 'texture/player/turnleft/top'))
   }
 
@@ -86,6 +94,10 @@ export class PlayerStateMachine extends Component {
         if (this.getParams(PARAM_NAME_ENUM.TURNLEFT)) {
           this.currentState = this.stateMachines.get(PARAM_NAME_ENUM.TURNLEFT)
         }
+        break;
+
+      default:
+        this.currentState = this.stateMachines.get(PARAM_NAME_ENUM.IDLE)
     }
   }
 }
