@@ -43,9 +43,9 @@ export class EntityManager extends Component {
     this.fsm.setParams(this._state, true);
   }
 
-  async init(params: IEntity) {
+  init(params: IEntity) {
     // 创建人物 Sprite
-    await this.render();
+    this.render();
 
     this.x = params.x
     this.y = params.y
@@ -59,7 +59,7 @@ export class EntityManager extends Component {
     this.node.setPosition(TILE_WIDTH * this.x - TILE_WIDTH * 2, -TILE_HEIGHT * this.y + TILE_HEIGHT * 2);
   }
 
-  async render() {
+  render() {
     const sprite = this.addComponent(Sprite);
     sprite.sizeMode = Sprite.SizeMode.CUSTOM;
 

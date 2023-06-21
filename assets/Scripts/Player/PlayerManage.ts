@@ -7,9 +7,10 @@
 import { _decorator } from "cc";
 import { EntityManager } from "../../Base/EntityManager";
 import { DIRECTION_ENUM, ENITIY_STATE_ENUM, ENITIY_TYPE_ENUM, EVENT_ENUM, PLAYER_CTRL_ENUM } from "../../Enum";
+import DataManager from "../../Runtime/DataManage";
 import EventManage from "../../Runtime/EventManage";
+import { TileManage } from "../Tile/TileManage";
 import { PlayerStateMachine } from "./PlayerStateMachine";
-import DataManager from "../../RunTime/DataManage";
 const { ccclass, property } = _decorator;
 
 @ccclass("PlayerManage")
@@ -25,20 +26,17 @@ export class PlayerManage extends EntityManager {
     await this.fsm.init(); // 先加载完动画资源
 
     super.init({
-      x: 0,
-      y: 0,
+      x: 2,
+      y: 8,
       state: ENITIY_STATE_ENUM.IDLE,
       direction: DIRECTION_ENUM.TOP,
       type: ENITIY_TYPE_ENUM.PLAYER
     })
-  }
 
-  onLoad() {
-    EventManage.Instance.on(EVENT_ENUM.PLAYER_CTRL, this.move, this);
-  }
+    this.targetX = this.x
+    this.targetY = this.y
 
-  onDestroy() {
-    EventManage.Instance.off(EVENT_ENUM.PLAYER_CTRL, this.move);
+    EventManage.Instance.on(EVENT_ENUM.PLAYER_CTRL, this.inputHandle, this);
   }
 
   update() {
@@ -70,9 +68,13 @@ export class PlayerManage extends EntityManager {
     }
   }
 
+  inputHandle(direct: PLAYER_CTRL_ENUM) {
+    if (this.willBlock(direct)) return
+    this.move(direct)
+  }
+
   // 按钮Click实际走的方法
   move(direct: PLAYER_CTRL_ENUM) {
-    console.log(DataManager.Instance.mapInfo)
     if (direct === PLAYER_CTRL_ENUM.BOTTOM) {
       this.targetY++;
     } else if (direct === PLAYER_CTRL_ENUM.TOP) {
@@ -92,6 +94,77 @@ export class PlayerManage extends EntityManager {
       } else if (this.direction === DIRECTION_ENUM.RIGHT) {
         this.direction = DIRECTION_ENUM.TOP
       }
+    }
+  }
+
+  // 碰撞判断
+  willBlock(direct: PLAYER_CTRL_ENUM): boolean {
+    const { targetX: x, targetY: y, direction } = this
+
+    // 根据当前方向，找出当前枪的 x,y
+    let weaponX = x
+    let weaponY = y
+    if (direction === DIRECTION_ENUM.TOP) {
+      weaponY = y - 1
+    } else if (direction === DIRECTION_ENUM.RIGHT) {
+      weaponX = x + 1
+    } else if (direction === DIRECTION_ENUM.BOTTOM) {
+      weaponY = y + 1
+    } else if (direction === DIRECTION_ENUM.LEFT) {
+      weaponX = x - 1
+    }
+
+    if (direct === PLAYER_CTRL_ENUM.TOP) {
+      const playerNextTile = DataManager.Instance.tileList[x][y - 1]
+      const weaponNextTile = DataManager.Instance.tileList[weaponX][weaponY - 1]
+      return this.moveBlock(playerNextTile, weaponNextTile)
+    } else if (direct === PLAYER_CTRL_ENUM.BOTTOM) {
+      const playerNextTile = DataManager.Instance.tileList[x][y + 1]
+      const weaponNextTile = DataManager.Instance.tileList[weaponX][weaponY + 1]
+      return this.moveBlock(playerNextTile, weaponNextTile)
+    } else if (direct === PLAYER_CTRL_ENUM.RIGHT) {
+      const playerNextTile = DataManager.Instance.tileList[x + 1][y]
+      const weaponNextTile = DataManager.Instance.tileList[weaponX + 1][weaponY]
+      return this.moveBlock(playerNextTile, weaponNextTile)
+    } else if (direct === PLAYER_CTRL_ENUM.LEFT) {
+      const playerNextTile = DataManager.Instance.tileList[x - 1][y]
+      const weaponNextTile = DataManager.Instance.tileList[weaponX - 1][weaponY]
+      return this.moveBlock(playerNextTile, weaponNextTile)
+    } else if (direct === PLAYER_CTRL_ENUM.TURNLEFT) {
+      if (direction === DIRECTION_ENUM.TOP) {
+        // 判断人物的左和左上
+        const leftTile = DataManager.Instance.tileList[x - 1][y]
+        const leftTopTile = DataManager.Instance.tileList[x - 1][y - 1]
+        if (leftTile.turnable && leftTopTile.turnable) { } else { return true }
+      } else if (direction === DIRECTION_ENUM.RIGHT) {
+        // 判断人物的上和右上
+        const topTile = DataManager.Instance.tileList[x][y - 1]
+        const rightTopTile = DataManager.Instance.tileList[x + 1][y - 1]
+        if (topTile.turnable && rightTopTile.turnable) { } else { return true }
+      } else if (direction === DIRECTION_ENUM.BOTTOM) {
+        // 判断人物的右和右下
+        const rightTile = DataManager.Instance.tileList[x + 1][y]
+        const rightBottomTile = DataManager.Instance.tileList[x + 1][y + 1]
+        if (rightTile.turnable && rightBottomTile.turnable) { } else { return true }
+      } else if (direction === DIRECTION_ENUM.LEFT) {
+        // 判断人物的和下左下
+        const bottomTile = DataManager.Instance.tileList[x][y + 1]
+        const leftBottomTile = DataManager.Instance.tileList[x - 1][y + 1]
+        if (bottomTile.turnable && leftBottomTile.turnable) { } else { return true }
+      }
+    } else if (direct === PLAYER_CTRL_ENUM.TURNRIGHT) {
+
+    }
+
+    return false;
+  }
+
+  private moveBlock(playerNextTile: TileManage, weaponNextTile: TileManage) {
+    if (playerNextTile && playerNextTile.moveable &&
+      weaponNextTile && weaponNextTile.moveable) {
+      // empty
+    } else {
+      return true
     }
   }
 }
