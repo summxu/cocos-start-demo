@@ -7,14 +7,16 @@ const { ccclass, property } = _decorator;
 
 @ccclass("TileMapManage")
 export class TileMapManage extends Component {
-  start() {}
+  start() { }
 
   async init() {
     const tileImgs = await loadDir("texture/tile/tile");
 
-    const { mapInfo } = DataManager.Instance;
+    const { mapInfo, tileList } = DataManager.Instance;
+    DataManager.Instance.tileList = []
     // 遍历所有的瓦片图数据
     mapInfo.forEach((item, col) => {
+      tileList[col] = []
       item.forEach((element, row) => {
         if (element.src && element.type) {
           // 随机三种不同材质
@@ -37,8 +39,9 @@ export class TileMapManage extends Component {
           const node = createUINode("Tile");
           const tileManage = node.addComponent(TileManage);
           // 初始化 tile节点管理脚本
-          tileManage.init(SpriteFrame, col, row);
-
+          tileManage.init(element.type, SpriteFrame, col, row);
+          // 存储tile实体列表
+          tileList[col][row] = tileManage
           node.setParent(this.node);
         }
       });

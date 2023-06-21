@@ -4,12 +4,12 @@
 * @Last Modified time: 2023-06-20 14:58:23
 */
 
-import { Component, Sprite, UITransform, _decorator } from "cc";
-import { DIRECTION_ENUM, DIRECTION_ORDER_ENUM, ENITIY_STATE_ENUM, ENITIY_TYPE_ENUM, EVENT_ENUM, PARAM_NAME_ENUM, PLAYER_CTRL_ENUM } from "../../Enum";
-import EventManage from "../../Runtime/EventManage";
-import { TILE_HEIGHT, TILE_WIDTH } from "../Tile/TileManage";
-import { PlayerStateMachine } from "./PlayerStateMachine";
+import { _decorator } from "cc";
 import { EntityManager } from "../../Base/EntityManager";
+import { DIRECTION_ENUM, ENITIY_STATE_ENUM, ENITIY_TYPE_ENUM, EVENT_ENUM, PLAYER_CTRL_ENUM } from "../../Enum";
+import EventManage from "../../Runtime/EventManage";
+import { PlayerStateMachine } from "./PlayerStateMachine";
+import DataManager from "../../RunTime/DataManage";
 const { ccclass, property } = _decorator;
 
 @ccclass("PlayerManage")
@@ -72,6 +72,7 @@ export class PlayerManage extends EntityManager {
 
   // 按钮Click实际走的方法
   move(direct: PLAYER_CTRL_ENUM) {
+    console.log(DataManager.Instance.mapInfo)
     if (direct === PLAYER_CTRL_ENUM.BOTTOM) {
       this.targetY++;
     } else if (direct === PLAYER_CTRL_ENUM.TOP) {

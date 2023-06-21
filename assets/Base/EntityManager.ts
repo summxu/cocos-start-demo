@@ -10,7 +10,7 @@ import { Component, Sprite, UITransform, _decorator } from "cc";
 import { IEntity } from "../Levels";
 import { PlayerStateMachine } from "../Scripts/Player/PlayerStateMachine";
 import { TILE_HEIGHT, TILE_WIDTH } from "../Scripts/Tile/TileManage";
-import { DIRECTION_ENUM, DIRECTION_ORDER_ENUM, ENITIY_STATE_ENUM, PARAM_NAME_ENUM } from "../Enum";
+import { DIRECTION_ENUM, DIRECTION_ORDER_ENUM, ENITIY_STATE_ENUM, ENITIY_TYPE_ENUM, PARAM_NAME_ENUM } from "../Enum";
 const { ccclass, property } = _decorator;
 
 @ccclass("EntityManager")
@@ -19,6 +19,7 @@ export class EntityManager extends Component {
   // x,y表示当前位置
   x: number = 0;
   y: number = 0;
+  type: ENITIY_TYPE_ENUM
 
   // 设置人物的方向和动画状态，数据驱动视图
   private _direction: DIRECTION_ENUM
@@ -49,6 +50,7 @@ export class EntityManager extends Component {
     this.x = params.x
     this.y = params.y
     this.state = params.state
+    this.type = params.type
     this.direction = params.direction
   }
 
