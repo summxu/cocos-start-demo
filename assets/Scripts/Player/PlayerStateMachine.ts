@@ -3,12 +3,11 @@
  * @Date: 2023-06-19 20:53:39
  * @LastEditTime: 2023-06-19 23:07:13
  */
-import { Animation, AnimationClip, _decorator } from 'cc'
-import State from '../../Base/State'
+import { Animation, _decorator } from 'cc'
 import { StateMachine, getInitParamsNumebr, getInitParamsTrigger } from '../../Base/StateMachine'
 import { ENITIY_STATE_ENUM, PARAM_NAME_ENUM } from '../../Enum'
-import { TurnLeftSubStateMachine } from './TurnLeftSubStateMachine'
 import { IdleSubStateMachine } from './IdleSubStateMachine'
+import { TurnLeftSubStateMachine } from './TurnLeftSubStateMachine'
 const { ccclass, property } = _decorator
 
 @ccclass('PlayerStateMachine')
@@ -58,7 +57,7 @@ export class PlayerStateMachine extends StateMachine {
           this.currentState = this.stateMachines.get(PARAM_NAME_ENUM.IDLE)
         } else if (this.getParams(PARAM_NAME_ENUM.TURNLEFT)) {
           this.currentState = this.stateMachines.get(PARAM_NAME_ENUM.TURNLEFT)
-        } else if (this.getParams(PARAM_NAME_ENUM.DIRECTION)) {
+        } else {
           this.currentState = this.currentState
         }
         break;

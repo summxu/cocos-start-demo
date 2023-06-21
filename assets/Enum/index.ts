@@ -59,6 +59,10 @@ export enum ENITIY_STATE_ENUM {
   TURNLEFT = "TURNLEFT",
 }
 
+export enum ENITIY_TYPE_ENUM {
+  PLAYER = 'PLAYER'
+}
+
 export enum DIRECTION_ORDER_ENUM {
   TOP = 0,
   RIGHT = 1,
