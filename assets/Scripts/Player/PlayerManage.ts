@@ -49,6 +49,7 @@ export class PlayerManage extends Component {
     await this.fsm.init(); // 先加载完动画资源
     // 初始化状态机的默认状态
     this.state = ENITIY_STATE_ENUM.IDLE
+    this.direction = DIRECTION_ENUM.TOP
   }
 
   onLoad() {
@@ -104,6 +105,15 @@ export class PlayerManage extends Component {
       this.targetX++;
     } else if (direct === PLAYER_CTRL_ENUM.TURNLEFT) {
       this.state = ENITIY_STATE_ENUM.TURNLEFT
+      if (this.direction === DIRECTION_ENUM.TOP) {
+        this.direction = DIRECTION_ENUM.RIGHT
+      } else if (this.direction === DIRECTION_ENUM.RIGHT) {
+        this.direction = DIRECTION_ENUM.BOTTOM
+      } else if (this.direction === DIRECTION_ENUM.BOTTOM) {
+        this.direction = DIRECTION_ENUM.LEFT
+      } else if (this.direction === DIRECTION_ENUM.LEFT) {
+        this.direction = DIRECTION_ENUM.TOP
+      }
     }
   }
 

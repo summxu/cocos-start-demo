@@ -6,7 +6,9 @@
 import { Animation, AnimationClip, _decorator } from 'cc'
 import State from '../../Base/State'
 import { StateMachine, getInitParamsNumebr, getInitParamsTrigger } from '../../Base/StateMachine'
-import { PARAM_NAME_ENUM } from '../../Enum'
+import { ENITIY_STATE_ENUM, PARAM_NAME_ENUM } from '../../Enum'
+import { TurnLeftSubStateMachine } from './TurnLeftSubStateMachine'
+import { IdleSubStateMachine } from './IdleSubStateMachine'
 const { ccclass, property } = _decorator
 
 @ccclass('PlayerStateMachine')
@@ -28,10 +30,10 @@ export class PlayerStateMachine extends StateMachine {
     this.params.set(PARAM_NAME_ENUM.DIRECTION, getInitParamsNumebr())
   }
 
-  // 初始化状态机列表
+  // 初始化状态机列表(子状态机)
   initStateMachines() {
-    this.stateMachines.set(PARAM_NAME_ENUM.IDLE, new State(this, 'texture/player/idle/top', AnimationClip.WrapMode.Loop))
-    this.stateMachines.set(PARAM_NAME_ENUM.TURNLEFT, new State(this, 'texture/player/turnleft/top'))
+    this.stateMachines.set(ENITIY_STATE_ENUM.TURNLEFT, new TurnLeftSubStateMachine(this))
+    this.stateMachines.set(ENITIY_STATE_ENUM.IDLE, new IdleSubStateMachine(this))
   }
 
   // 绑定一个动画事件,其他动画播放完成后，继续播放 idle动画
@@ -51,16 +53,15 @@ export class PlayerStateMachine extends StateMachine {
     switch (this.currentState) {
       case this.stateMachines.get(PARAM_NAME_ENUM.IDLE):
       case this.stateMachines.get(PARAM_NAME_ENUM.TURNLEFT):
-        // 检查params的trigger value，是否为 true
+        // 修改 currentState 触发 State 本身的 run 方法
         if (this.getParams(PARAM_NAME_ENUM.IDLE)) {
           this.currentState = this.stateMachines.get(PARAM_NAME_ENUM.IDLE)
-        }
-
-        if (this.getParams(PARAM_NAME_ENUM.TURNLEFT)) {
+        } else if (this.getParams(PARAM_NAME_ENUM.TURNLEFT)) {
           this.currentState = this.stateMachines.get(PARAM_NAME_ENUM.TURNLEFT)
+        } else if (this.getParams(PARAM_NAME_ENUM.DIRECTION)) {
+          this.currentState = this.currentState
         }
         break;
-
       default:
         this.currentState = this.stateMachines.get(PARAM_NAME_ENUM.IDLE)
     }

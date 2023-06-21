@@ -9,6 +9,7 @@
 import { Animation, Component, SpriteFrame, _decorator } from 'cc'
 import { FSM_PARAMS_TYPE_ENUM } from '../Enum'
 import State from './State'
+import { SubStateMachine } from './SubStateMachine'
 const { ccclass, property } = _decorator
 
 // 参数列表共有两个类型，number 表示方向 trigger 表示左转右转
@@ -39,11 +40,11 @@ export abstract class StateMachine extends Component {
   // 创建资源加载的 PromiseAll
   waitingList: Promise<SpriteFrame[]>[] = []
   // 定义当前的状态机，通过切换这个来播放动画
-  private _currentState: State = null
+  private _currentState: State | SubStateMachine = null
   // 定义一个参数(变量)列表，来指定步骤改变状态
   params: Map<string, IParamsValue> = new Map()
   // 状态机列表，value是一个的动画 state 类
-  stateMachines: Map<string, State> = new Map()
+  stateMachines: Map<string, State | SubStateMachine> = new Map()
 
   set currentState(newState) {
     this._currentState = newState
