@@ -17,7 +17,7 @@ const { ccclass, property } = _decorator;
 export class PlayerManage extends EntityManager {
   targetY: number = 0;
   targetX: number = 0;
-
+  private isMoveing: boolean = false
   private readonly speed: number = 1 / 10; // 每帧移动的距离，表示速度
 
   async init() {
@@ -60,11 +60,16 @@ export class PlayerManage extends EntityManager {
     // 移动过程中，如果目标位置和当前位置的差值小于0.1的时候，认定为停止移动
     if (
       Math.abs(this.targetY - this.y) < 0.1 &&
-      Math.abs(this.targetX - this.x) < 0.1
+      Math.abs(this.targetX - this.x) < 0.1 &&
+      this.isMoveing
     ) {
+      this.isMoveing = false
       // 相等既停止移动，不会走任何判断
       this.x = this.targetX;
       this.y = this.targetY;
+
+      // 停止移动之后，发送移动完成事件,isMoveing 保证只触发一次
+      EventManage.Instance.emit(EVENT_ENUM.MOVE_OVER)
     }
   }
 
@@ -76,12 +81,16 @@ export class PlayerManage extends EntityManager {
   // 按钮Click实际走的方法
   move(direct: PLAYER_CTRL_ENUM) {
     if (direct === PLAYER_CTRL_ENUM.BOTTOM) {
+      this.isMoveing = true
       this.targetY++;
     } else if (direct === PLAYER_CTRL_ENUM.TOP) {
+      this.isMoveing = true
       this.targetY--;
     } else if (direct === PLAYER_CTRL_ENUM.LEFT) {
+      this.isMoveing = true
       this.targetX--;
     } else if (direct === PLAYER_CTRL_ENUM.RIGHT) {
+      this.isMoveing = true
       this.targetX++;
     } else if (direct === PLAYER_CTRL_ENUM.TURNLEFT) {
       this.state = ENITIY_STATE_ENUM.TURNLEFT
@@ -94,6 +103,7 @@ export class PlayerManage extends EntityManager {
       } else if (this.direction === DIRECTION_ENUM.RIGHT) {
         this.direction = DIRECTION_ENUM.TOP
       }
+      EventManage.Instance.emit(EVENT_ENUM.MOVE_OVER)
     } else if (direct === PLAYER_CTRL_ENUM.TURNRIGHT) {
       this.state = ENITIY_STATE_ENUM.TURNRIGHT
       if (this.direction === DIRECTION_ENUM.TOP) {
@@ -105,6 +115,7 @@ export class PlayerManage extends EntityManager {
       } else if (this.direction === DIRECTION_ENUM.RIGHT) {
         this.direction = DIRECTION_ENUM.BOTTOM
       }
+      EventManage.Instance.emit(EVENT_ENUM.MOVE_OVER)
     }
   }
 

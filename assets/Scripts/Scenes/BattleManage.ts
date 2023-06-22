@@ -37,7 +37,7 @@ export class BattleManage extends Component {
 
     this.generateTileMap();
     this.generatePlayer();
-    this.generateWoodenSkeleton()
+    this.generateEnemies()
   }
 
   // 下一关执行的方法
@@ -58,18 +58,23 @@ export class BattleManage extends Component {
     this.stage.setParent(this.node);
   }
 
-  generatePlayer() {
+  async generatePlayer() {
     const player = createUINode();
     player.setParent(this.stage);
     const playerManage = player.addComponent(PlayerManage); // 往瓦片地图node上添加脚本组件
-    playerManage.init();
+    await playerManage.init();
+
+    DataManager.Instance.player = playerManage
+    EventManage.Instance.emit(EVENT_ENUM.PLAYER_FINISH)
   }
-  
-  generateWoodenSkeleton() {
+
+  async generateEnemies() {
     const woodenSkeleton = createUINode();
     woodenSkeleton.setParent(this.stage);
     const woodenSkeletonManager = woodenSkeleton.addComponent(WoodenSkeletonManager); // 往瓦片地图node上添加脚本组件
-    woodenSkeletonManager.init();
+    await woodenSkeletonManager.init();
+
+    DataManager.Instance.enemies.push(woodenSkeletonManager)
   }
 
   generateTileMap() {
