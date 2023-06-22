@@ -33,9 +33,9 @@ export class PlayerStateMachine extends StateMachine {
   // 初始化参数(变量)列表
   initParams() {
     this.params.set(PARAM_NAME_ENUM.IDLE, getInitParamsTrigger())
+    this.params.set(PARAM_NAME_ENUM.DIRECTION, getInitParamsNumebr())
     this.params.set(PARAM_NAME_ENUM.TURNLEFT, getInitParamsTrigger())
     this.params.set(PARAM_NAME_ENUM.TURNRIGHT, getInitParamsTrigger())
-    this.params.set(PARAM_NAME_ENUM.DIRECTION, getInitParamsNumebr())
     this.params.set(PARAM_NAME_ENUM.BLOCKFRONT, getInitParamsTrigger())
     this.params.set(PARAM_NAME_ENUM.BLOCKLEFT, getInitParamsTrigger())
     this.params.set(PARAM_NAME_ENUM.BLOCKBACK, getInitParamsTrigger())

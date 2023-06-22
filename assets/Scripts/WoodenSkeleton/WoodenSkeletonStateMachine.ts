@@ -5,7 +5,7 @@
  */
 import { Animation, _decorator } from 'cc'
 import { EntityManager } from '../../Base/EntityManager'
-import { getInitParamsTrigger, StateMachine } from '../../Base/StateMachine'
+import { getInitParamsNumebr, getInitParamsTrigger, StateMachine } from '../../Base/StateMachine'
 import { ENITIY_STATE_ENUM, PARAM_NAME_ENUM } from '../../Enum'
 import { IdleSubStateMachine } from './IdleSubStateMachine'
 const { ccclass, property } = _decorator
@@ -25,6 +25,7 @@ export class WoodenSkeletonStateMachine extends StateMachine {
   // 初始化参数(变量)列表
   initParams() {
     this.params.set(PARAM_NAME_ENUM.IDLE, getInitParamsTrigger())
+    this.params.set(PARAM_NAME_ENUM.DIRECTION, getInitParamsNumebr())
   }
 
   // 初始化状态机列表(子状态机)
