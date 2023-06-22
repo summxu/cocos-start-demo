@@ -164,7 +164,27 @@ export class PlayerManage extends EntityManager {
         if (bottomTile.turnable && leftBottomTile.turnable) { } else { return true }
       }
     } else if (direct === PLAYER_CTRL_ENUM.TURNRIGHT) {
-
+      if (direction === DIRECTION_ENUM.TOP) {
+        // 判断人物的右和右上
+        const rightTile = DataManager.Instance.tileList[x + 1][y]
+        const rightTopTile = DataManager.Instance.tileList[x + 1][y - 1]
+        if (rightTile.turnable && rightTopTile.turnable) { } else { return true }
+      } else if (direction === DIRECTION_ENUM.RIGHT) {
+        // 判断人物的下和右下
+        const bottomTile = DataManager.Instance.tileList[x][y + 1]
+        const rightBottomTile = DataManager.Instance.tileList[x + 1][y + 1]
+        if (bottomTile.turnable && rightBottomTile.turnable) { } else { return true }
+      } else if (direction === DIRECTION_ENUM.BOTTOM) {
+        // 判断人物的左和左下
+        const leftTile = DataManager.Instance.tileList[x - 1][y]
+        const leftBottomTile = DataManager.Instance.tileList[x - 1][y + 1]
+        if (leftTile.turnable && leftBottomTile.turnable) { } else { return true }
+      } else if (direction === DIRECTION_ENUM.LEFT) {
+        // 判断人物的和上左上
+        const leftTopTile = DataManager.Instance.tileList[x - 1][y - 1]
+        const topTile = DataManager.Instance.tileList[x][y - 1]
+        if (leftTopTile.turnable && topTile.turnable) { } else { return true }
+      }
     }
 
     return false;
