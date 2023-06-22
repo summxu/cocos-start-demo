@@ -94,6 +94,17 @@ export class PlayerManage extends EntityManager {
       } else if (this.direction === DIRECTION_ENUM.RIGHT) {
         this.direction = DIRECTION_ENUM.TOP
       }
+    } else if (direct === PLAYER_CTRL_ENUM.TURNRIGHT) {
+      this.state = ENITIY_STATE_ENUM.TURNRIGHT
+      if (this.direction === DIRECTION_ENUM.TOP) {
+        this.direction = DIRECTION_ENUM.RIGHT
+      } else if (this.direction === DIRECTION_ENUM.LEFT) {
+        this.direction = DIRECTION_ENUM.TOP
+      } else if (this.direction === DIRECTION_ENUM.BOTTOM) {
+        this.direction = DIRECTION_ENUM.LEFT
+      } else if (this.direction === DIRECTION_ENUM.RIGHT) {
+        this.direction = DIRECTION_ENUM.BOTTOM
+      }
     }
   }
 

@@ -8,6 +8,7 @@ import { StateMachine, getInitParamsNumebr, getInitParamsTrigger } from '../../B
 import { ENITIY_STATE_ENUM, PARAM_NAME_ENUM } from '../../Enum'
 import { IdleSubStateMachine } from './IdleSubStateMachine'
 import { TurnLeftSubStateMachine } from './TurnLeftSubStateMachine'
+import { TurnRightSubStateMachine } from './TurnRightSubStateMachine'
 const { ccclass, property } = _decorator
 
 @ccclass('PlayerStateMachine')
@@ -26,12 +27,14 @@ export class PlayerStateMachine extends StateMachine {
   initParams() {
     this.params.set(PARAM_NAME_ENUM.IDLE, getInitParamsTrigger())
     this.params.set(PARAM_NAME_ENUM.TURNLEFT, getInitParamsTrigger())
+    this.params.set(PARAM_NAME_ENUM.TURNRIGHT, getInitParamsTrigger())
     this.params.set(PARAM_NAME_ENUM.DIRECTION, getInitParamsNumebr())
   }
 
   // 初始化状态机列表(子状态机)
   initStateMachines() {
     this.stateMachines.set(ENITIY_STATE_ENUM.TURNLEFT, new TurnLeftSubStateMachine(this))
+    this.stateMachines.set(ENITIY_STATE_ENUM.TURNRIGHT, new TurnRightSubStateMachine(this))
     this.stateMachines.set(ENITIY_STATE_ENUM.IDLE, new IdleSubStateMachine(this))
   }
 
@@ -52,11 +55,14 @@ export class PlayerStateMachine extends StateMachine {
     switch (this.currentState) {
       case this.stateMachines.get(PARAM_NAME_ENUM.IDLE):
       case this.stateMachines.get(PARAM_NAME_ENUM.TURNLEFT):
+      case this.stateMachines.get(PARAM_NAME_ENUM.TURNRIGHT):
         // 修改 currentState 触发 State 本身的 run 方法
         if (this.getParams(PARAM_NAME_ENUM.IDLE)) {
           this.currentState = this.stateMachines.get(PARAM_NAME_ENUM.IDLE)
         } else if (this.getParams(PARAM_NAME_ENUM.TURNLEFT)) {
           this.currentState = this.stateMachines.get(PARAM_NAME_ENUM.TURNLEFT)
+        } else if (this.getParams(PARAM_NAME_ENUM.TURNRIGHT)) {
+          this.currentState = this.stateMachines.get(PARAM_NAME_ENUM.TURNRIGHT)
         } else {
           this.currentState = this.currentState
         }
