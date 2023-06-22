@@ -7,6 +7,7 @@ import { createUINode } from "../../Utils";
 import { PlayerManage } from "../Player/PlayerManage";
 import { TILE_HEIGHT, TILE_WIDTH } from "../Tile/TileManage";
 import { TileMapManage } from "../Tile/TileMapManage";
+import { WoodenSkeletonManager } from "../WoodenSkeleton/WoodenSkeletonManager";
 const { ccclass, property } = _decorator;
 
 @ccclass("BattleManage")
@@ -36,6 +37,7 @@ export class BattleManage extends Component {
 
     this.generateTileMap();
     this.generatePlayer();
+    this.generateWoodenSkeleton()
   }
 
   // 下一关执行的方法
@@ -61,6 +63,13 @@ export class BattleManage extends Component {
     player.setParent(this.stage);
     const playerManage = player.addComponent(PlayerManage); // 往瓦片地图node上添加脚本组件
     playerManage.init();
+  }
+  
+  generateWoodenSkeleton() {
+    const woodenSkeleton = createUINode();
+    woodenSkeleton.setParent(this.stage);
+    const woodenSkeletonManager = woodenSkeleton.addComponent(WoodenSkeletonManager); // 往瓦片地图node上添加脚本组件
+    woodenSkeletonManager.init();
   }
 
   generateTileMap() {

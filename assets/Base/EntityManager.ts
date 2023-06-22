@@ -7,15 +7,15 @@
  */
 
 import { Component, Sprite, UITransform, _decorator } from "cc";
-import { IEntity } from "../Levels";
-import { PlayerStateMachine } from "../Scripts/Player/PlayerStateMachine";
-import { TILE_HEIGHT, TILE_WIDTH } from "../Scripts/Tile/TileManage";
 import { DIRECTION_ENUM, DIRECTION_ORDER_ENUM, ENITIY_STATE_ENUM, ENITIY_TYPE_ENUM, PARAM_NAME_ENUM } from "../Enum";
+import { IEntity } from "../Levels";
+import { TILE_HEIGHT, TILE_WIDTH } from "../Scripts/Tile/TileManage";
+import { StateMachine } from "./StateMachine";
 const { ccclass, property } = _decorator;
 
 @ccclass("EntityManager")
 export class EntityManager extends Component {
-  fsm: PlayerStateMachine;
+  fsm: StateMachine;
   // x,y表示当前位置
   x: number = 0;
   y: number = 0;
