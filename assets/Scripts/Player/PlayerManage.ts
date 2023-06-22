@@ -128,73 +128,140 @@ export class PlayerManage extends EntityManager {
     if (direct === PLAYER_CTRL_ENUM.TOP) {
       const playerNextTile = DataManager.Instance.tileList[x][y - 1]
       const weaponNextTile = DataManager.Instance.tileList[weaponX][weaponY - 1]
-      return this.moveBlock(playerNextTile, weaponNextTile)
+      return this.moveBlock(playerNextTile, weaponNextTile, direct)
     } else if (direct === PLAYER_CTRL_ENUM.BOTTOM) {
       const playerNextTile = DataManager.Instance.tileList[x][y + 1]
       const weaponNextTile = DataManager.Instance.tileList[weaponX][weaponY + 1]
-      return this.moveBlock(playerNextTile, weaponNextTile)
+      return this.moveBlock(playerNextTile, weaponNextTile, direct)
     } else if (direct === PLAYER_CTRL_ENUM.RIGHT) {
       const playerNextTile = DataManager.Instance.tileList[x + 1][y]
       const weaponNextTile = DataManager.Instance.tileList[weaponX + 1][weaponY]
-      return this.moveBlock(playerNextTile, weaponNextTile)
+      return this.moveBlock(playerNextTile, weaponNextTile, direct)
     } else if (direct === PLAYER_CTRL_ENUM.LEFT) {
       const playerNextTile = DataManager.Instance.tileList[x - 1][y]
       const weaponNextTile = DataManager.Instance.tileList[weaponX - 1][weaponY]
-      return this.moveBlock(playerNextTile, weaponNextTile)
+      return this.moveBlock(playerNextTile, weaponNextTile, direct)
     } else if (direct === PLAYER_CTRL_ENUM.TURNLEFT) {
       if (direction === DIRECTION_ENUM.TOP) {
         // 判断人物的左和左上
         const leftTile = DataManager.Instance.tileList[x - 1][y]
         const leftTopTile = DataManager.Instance.tileList[x - 1][y - 1]
-        if (leftTile.turnable && leftTopTile.turnable) { } else { return true }
+        if (leftTile.turnable && leftTopTile.turnable) { } else {
+          this.state = ENITIY_STATE_ENUM.BLOCKTURNLEFT
+          return true
+        }
       } else if (direction === DIRECTION_ENUM.RIGHT) {
         // 判断人物的上和右上
         const topTile = DataManager.Instance.tileList[x][y - 1]
         const rightTopTile = DataManager.Instance.tileList[x + 1][y - 1]
-        if (topTile.turnable && rightTopTile.turnable) { } else { return true }
+        if (topTile.turnable && rightTopTile.turnable) { } else {
+          this.state = ENITIY_STATE_ENUM.BLOCKTURNLEFT
+          return true
+        }
       } else if (direction === DIRECTION_ENUM.BOTTOM) {
         // 判断人物的右和右下
         const rightTile = DataManager.Instance.tileList[x + 1][y]
         const rightBottomTile = DataManager.Instance.tileList[x + 1][y + 1]
-        if (rightTile.turnable && rightBottomTile.turnable) { } else { return true }
+        if (rightTile.turnable && rightBottomTile.turnable) { } else {
+          this.state = ENITIY_STATE_ENUM.BLOCKTURNLEFT
+          return true
+        }
       } else if (direction === DIRECTION_ENUM.LEFT) {
         // 判断人物的和下左下
         const bottomTile = DataManager.Instance.tileList[x][y + 1]
         const leftBottomTile = DataManager.Instance.tileList[x - 1][y + 1]
-        if (bottomTile.turnable && leftBottomTile.turnable) { } else { return true }
+        if (bottomTile.turnable && leftBottomTile.turnable) { } else {
+          this.state = ENITIY_STATE_ENUM.BLOCKTURNLEFT
+          return true
+        }
       }
     } else if (direct === PLAYER_CTRL_ENUM.TURNRIGHT) {
       if (direction === DIRECTION_ENUM.TOP) {
         // 判断人物的右和右上
         const rightTile = DataManager.Instance.tileList[x + 1][y]
         const rightTopTile = DataManager.Instance.tileList[x + 1][y - 1]
-        if (rightTile.turnable && rightTopTile.turnable) { } else { return true }
+        if (rightTile.turnable && rightTopTile.turnable) { } else {
+          this.state = ENITIY_STATE_ENUM.BLOCKTURNRIGHT
+          return true
+        }
       } else if (direction === DIRECTION_ENUM.RIGHT) {
         // 判断人物的下和右下
         const bottomTile = DataManager.Instance.tileList[x][y + 1]
         const rightBottomTile = DataManager.Instance.tileList[x + 1][y + 1]
-        if (bottomTile.turnable && rightBottomTile.turnable) { } else { return true }
+        if (bottomTile.turnable && rightBottomTile.turnable) { } else {
+          this.state = ENITIY_STATE_ENUM.BLOCKTURNRIGHT
+          return true
+        }
       } else if (direction === DIRECTION_ENUM.BOTTOM) {
         // 判断人物的左和左下
         const leftTile = DataManager.Instance.tileList[x - 1][y]
         const leftBottomTile = DataManager.Instance.tileList[x - 1][y + 1]
-        if (leftTile.turnable && leftBottomTile.turnable) { } else { return true }
+        if (leftTile.turnable && leftBottomTile.turnable) { } else {
+          this.state = ENITIY_STATE_ENUM.BLOCKTURNRIGHT
+          return true
+        }
       } else if (direction === DIRECTION_ENUM.LEFT) {
         // 判断人物的和上左上
         const leftTopTile = DataManager.Instance.tileList[x - 1][y - 1]
         const topTile = DataManager.Instance.tileList[x][y - 1]
-        if (leftTopTile.turnable && topTile.turnable) { } else { return true }
+        if (leftTopTile.turnable && topTile.turnable) { } else {
+          this.state = ENITIY_STATE_ENUM.BLOCKTURNRIGHT
+          return true
+        }
       }
     }
 
     return false;
   }
 
-  private moveBlock(playerNextTile: TileManage, weaponNextTile: TileManage) {
+  private moveBlock(playerNextTile: TileManage, weaponNextTile: TileManage, direct: PLAYER_CTRL_ENUM) {
+    const { direction } = this
     if (playerNextTile && playerNextTile.moveable &&
       weaponNextTile && weaponNextTile.moveable) {
       // empty
     } else {
+      // 按钮方向下，还需分别判断玩家方向
+      if (direct === PLAYER_CTRL_ENUM.TOP) {
+        if (direction === DIRECTION_ENUM.TOP) {
+          this.state = ENITIY_STATE_ENUM.BLOCKFRONT
+        } else if (direction === DIRECTION_ENUM.RIGHT) {
+          this.state = ENITIY_STATE_ENUM.BLOCKLEFT
+        } else if (direction === DIRECTION_ENUM.BOTTOM) {
+          this.state = ENITIY_STATE_ENUM.BLOCKBACK
+        } else if (direction === DIRECTION_ENUM.LEFT) {
+          this.state = ENITIY_STATE_ENUM.BLOCKRIGHT
+        }
+      } else if (direct === PLAYER_CTRL_ENUM.RIGHT) {
+        if (direction === DIRECTION_ENUM.TOP) {
+          this.state = ENITIY_STATE_ENUM.BLOCKRIGHT
+        } else if (direction === DIRECTION_ENUM.RIGHT) {
+          this.state = ENITIY_STATE_ENUM.BLOCKFRONT
+        } else if (direction === DIRECTION_ENUM.BOTTOM) {
+          this.state = ENITIY_STATE_ENUM.BLOCKLEFT
+        } else if (direction === DIRECTION_ENUM.LEFT) {
+          this.state = ENITIY_STATE_ENUM.BLOCKBACK
+        }
+      } else if (direct === PLAYER_CTRL_ENUM.LEFT) {
+        if (direction === DIRECTION_ENUM.TOP) {
+          this.state = ENITIY_STATE_ENUM.BLOCKLEFT
+        } else if (direction === DIRECTION_ENUM.RIGHT) {
+          this.state = ENITIY_STATE_ENUM.BLOCKBACK
+        } else if (direction === DIRECTION_ENUM.BOTTOM) {
+          this.state = ENITIY_STATE_ENUM.BLOCKRIGHT
+        } else if (direction === DIRECTION_ENUM.LEFT) {
+          this.state = ENITIY_STATE_ENUM.BLOCKFRONT
+        }
+      } else if (direct === PLAYER_CTRL_ENUM.BOTTOM) {
+        if (direction === DIRECTION_ENUM.TOP) {
+          this.state = ENITIY_STATE_ENUM.BLOCKBACK
+        } else if (direction === DIRECTION_ENUM.RIGHT) {
+          this.state = ENITIY_STATE_ENUM.BLOCKRIGHT
+        } else if (direction === DIRECTION_ENUM.BOTTOM) {
+          this.state = ENITIY_STATE_ENUM.BLOCKFRONT
+        } else if (direction === DIRECTION_ENUM.LEFT) {
+          this.state = ENITIY_STATE_ENUM.BLOCKLEFT
+        }
+      }
       return true
     }
   }

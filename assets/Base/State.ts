@@ -10,6 +10,7 @@
 
 import { AnimationClip, Sprite, animation } from "cc";
 import { loadDir } from "../RunTime/ResourceManage";
+import { sortSpriteFrame } from "../Utils";
 import { StateMachine } from "./StateMachine";
 
 const ANIMATION_SPEED = 1 / 8; // 帧率，每秒8帧，代表速度
@@ -40,7 +41,8 @@ export default class State {
     const spriteFrames = await promise
     // 指定唯一的通道关键帧，指定每帧需要显示什么 spriteFrames
     track.channel.curve.assignSorted(
-      spriteFrames.map((item, index) => [index * ANIMATION_SPEED, item])
+      // loadDir 读取顺序不一致，需要排序
+      sortSpriteFrame(spriteFrames).map((item, index) => [index * ANIMATION_SPEED, item])
     );
 
     // 整个动画剪辑的周期,单位（秒）
