@@ -1,11 +1,12 @@
-import { color, Component, Node, Sprite, UITransform, _decorator } from "cc";
-import { EVENT_ENUM, PLAYER_CTRL_ENUM } from "../../Enum";
+import { Component, Node, _decorator } from "cc";
+import { EVENT_ENUM } from "../../Enum";
 import levels from "../../Levels";
 import DataManager from "../../Runtime/DataManage";
 import EventManage from "../../Runtime/EventManage";
 import { createUINode } from "../../Utils";
 import { DoorManager } from "../Door/DoorManager";
 import { PlayerManage } from "../Player/PlayerManage";
+import { IronSkeletonManager } from "../RronSkeleton/IronSkeletonManager";
 import { TILE_HEIGHT, TILE_WIDTH } from "../Tile/TileManage";
 import { TileMapManage } from "../Tile/TileMapManage";
 import { WoodenSkeletonManager } from "../WoodenSkeleton/WoodenSkeletonManager";
@@ -76,7 +77,14 @@ export class BattleManage extends Component {
     const woodenSkeletonManager = woodenSkeleton.addComponent(WoodenSkeletonManager); // 往瓦片地图node上添加脚本组件
     await woodenSkeletonManager.init();
 
+    const ironSkeleton = createUINode();
+    ironSkeleton.setParent(this.stage);
+    const ironSkeletonManager = ironSkeleton.addComponent(IronSkeletonManager); // 往瓦片地图node上添加脚本组件
+    await ironSkeletonManager.init();
+
     DataManager.Instance.enemies.push(woodenSkeletonManager)
+    DataManager.Instance.enemies.push(ironSkeletonManager)
+
   }
 
   async generateDoor() {

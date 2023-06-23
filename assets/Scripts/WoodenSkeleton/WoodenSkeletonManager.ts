@@ -4,16 +4,16 @@
 * @Last Modified time: 2023-06-20 14:58:23
 */
 
-import { cclegacy, _decorator } from "cc";
-import { EntityManager } from "../../Base/EntityManager";
-import { DIRECTION_ENUM, ENITIY_STATE_ENUM, ENITIY_TYPE_ENUM, EVENT_ENUM } from "../../Enum";
+import { _decorator } from "cc";
+import { EnemiesManager } from "../../Base/EnemiesManager";
+import { ENITIY_STATE_ENUM, EVENT_ENUM } from "../../Enum";
 import DataManager from "../../Runtime/DataManage";
 import EventManage from "../../Runtime/EventManage";
 import { WoodenSkeletonStateMachine } from "./WoodenSkeletonStateMachine";
 const { ccclass, property } = _decorator;
 
 @ccclass("WoodenSkeletonManager")
-export class WoodenSkeletonManager extends EntityManager {
+export class WoodenSkeletonManager extends EnemiesManager {
   async init() {
     // 初始化动画状态机
     this.fsm = this.addComponent(WoodenSkeletonStateMachine);
@@ -21,32 +21,15 @@ export class WoodenSkeletonManager extends EntityManager {
 
     super.init({
       x: 2,
-      y: 5,
-      state: ENITIY_STATE_ENUM.IDLE,
-      direction: DIRECTION_ENUM.TOP,
-      type: ENITIY_TYPE_ENUM.ENEMIES
+      y: 5
     })
 
-    EventManage.Instance.on(EVENT_ENUM.MOVE_OVER, this.seePlayHandle, this)
     EventManage.Instance.on(EVENT_ENUM.MOVE_OVER, this.attackHandle, this)
-    EventManage.Instance.on(EVENT_ENUM.PLAYER_FINISH, this.seePlayHandle, this)
-    EventManage.Instance.on(EVENT_ENUM.PLAYER_ATTACK, this.deathHandle, this)
-    this.seePlayHandle()
   }
 
   onDestroy() {
     super.onDestroy()
-    EventManage.Instance.off(EVENT_ENUM.MOVE_OVER, this.seePlayHandle)
     EventManage.Instance.off(EVENT_ENUM.MOVE_OVER, this.attackHandle)
-    EventManage.Instance.off(EVENT_ENUM.PLAYER_FINISH, this.seePlayHandle)
-    EventManage.Instance.off(EVENT_ENUM.PLAYER_ATTACK, this.deathHandle)
-  }
-
-  // 骷髅死亡
-  deathHandle(attackId: string) {
-    if (attackId !== this.id) return
-    if (this.state === ENITIY_STATE_ENUM.DEATH) return
-    this.state = ENITIY_STATE_ENUM.DEATH
   }
 
   // 根据玩家位置改变 attack
@@ -58,54 +41,10 @@ export class WoodenSkeletonManager extends EntityManager {
     if (relativeX <= 1 && relativeY <= 1 && relativeX !== relativeY) {
       this.state = ENITIY_STATE_ENUM.ATTACK
       // 发送攻击事件
-      EventManage.Instance.emit(EVENT_ENUM.ENEMIES_ATTACK, ENITIY_STATE_ENUM.AIRDEATH)
+      EventManage.Instance.emit(EVENT_ENUM.ENEMIES_ATTACK, ENITIY_STATE_ENUM.DEATH)
     } else {
       this.state = ENITIY_STATE_ENUM.IDLE
     }
   }
 
-  // 跟随玩家位置改变转向
-  seePlayHandle() {
-    if (!DataManager.Instance.player || this.state === ENITIY_STATE_ENUM.DEATH) return
-    const { x: playerX, y: playerY } = DataManager.Instance.player
-    // 判断距离怪物的相对位置
-    const [relativeX, relativeY] = [Math.abs(playerX - this.x), Math.abs(playerY - this.y)]
-    if (playerX <= this.x && playerY <= this.y) {
-      // 在怪物方向的第一象限
-      if (relativeX - relativeY === 0) {
-        // empty
-      } else if (relativeX - relativeY > 0) {
-        this.direction = DIRECTION_ENUM.LEFT
-      } else {
-        this.direction = DIRECTION_ENUM.TOP
-      }
-    } else if (playerX <= this.x && playerY >= this.y) {
-      // 在怪物方向的第三象限
-      if (relativeX - relativeY === 0) {
-        // empty
-      } else if (relativeX - relativeY > 0) {
-        this.direction = DIRECTION_ENUM.LEFT
-      } else {
-        this.direction = DIRECTION_ENUM.BOTTOM
-      }
-    } else if (playerX >= this.x && playerY <= this.y) {
-      // 在怪物方向的第二象限
-      if (relativeX - relativeY === 0) {
-        // empty
-      } else if (relativeX - relativeY > 0) {
-        this.direction = DIRECTION_ENUM.RIGHT
-      } else {
-        this.direction = DIRECTION_ENUM.TOP
-      }
-    } else if (playerX >= this.x && playerY >= this.y) {
-      // 在怪物方向的第四象限
-      if (relativeX - relativeY === 0) {
-        // empty
-      } else if (relativeX - relativeY > 0) {
-        this.direction = DIRECTION_ENUM.RIGHT
-      } else {
-        this.direction = DIRECTION_ENUM.BOTTOM
-      }
-    }
-  }
 }
