@@ -98,8 +98,9 @@ export class PlayerManage extends EntityManager {
     // 判断前方是否有怪物
     const enemiesId = this.hasEnemies(direct)
     if (enemiesId) {
-      EventManage.Instance.emit(EVENT_ENUM.PLAYER_ATTACK, enemiesId)
       this.state = ENITIY_STATE_ENUM.ATTACK
+      EventManage.Instance.emit(EVENT_ENUM.PLAYER_ATTACK, enemiesId)
+      EventManage.Instance.emit(EVENT_ENUM.OPEN_DOOR)
       return
     }
     this.move(direct)

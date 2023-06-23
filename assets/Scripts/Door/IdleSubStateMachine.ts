@@ -18,6 +18,8 @@ export class IdleSubStateMachine extends DirectionSubStateMachine {
     super(fsm)
     // 注册方向状态
     this.stateMachines.set(DIRECTION_ENUM.TOP, new State(fsm, `${PUBLIC_PATH}/top`))
+    this.stateMachines.set(DIRECTION_ENUM.RIGHT, new State(fsm, `${PUBLIC_PATH}/top`))
+    this.stateMachines.set(DIRECTION_ENUM.BOTTOM, new State(fsm, `${PUBLIC_PATH}/left`))
     this.stateMachines.set(DIRECTION_ENUM.LEFT, new State(fsm, `${PUBLIC_PATH}/left`))
   }
 }

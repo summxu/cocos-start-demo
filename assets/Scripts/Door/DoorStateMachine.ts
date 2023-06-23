@@ -4,7 +4,7 @@
  * @LastEditTime: 2023-06-19 23:07:13
  */
 import { Animation, _decorator } from 'cc'
-import { getInitParamsTrigger, StateMachine } from '../../Base/StateMachine'
+import { getInitParamsNumebr, getInitParamsTrigger, StateMachine } from '../../Base/StateMachine'
 import { ENITIY_STATE_ENUM, PARAM_NAME_ENUM } from '../../Enum'
 import { DeathSubStateMachine } from './DeathSubStateMachine'
 import { IdleSubStateMachine } from './IdleSubStateMachine'
@@ -25,6 +25,7 @@ export class DoorStateMachine extends StateMachine {
   initParams() {
     this.params.set(PARAM_NAME_ENUM.IDLE, getInitParamsTrigger())
     this.params.set(PARAM_NAME_ENUM.DEATH, getInitParamsTrigger())
+    this.params.set(PARAM_NAME_ENUM.DIRECTION, getInitParamsNumebr())
   }
 
   // 初始化状态机列表(子状态机)

@@ -10,7 +10,7 @@ import State from "../../Base/State";
 import { StateMachine } from "../../Base/StateMachine";
 import { DIRECTION_ENUM } from "../../Enum";
 
-const PUBLIC_PATH = `texture/door/death`
+const PUBLIC_PATH = `texture/door/death/death`
 
 export class DeathSubStateMachine extends DirectionSubStateMachine {
 
@@ -18,5 +18,8 @@ export class DeathSubStateMachine extends DirectionSubStateMachine {
     super(fsm)
     // 注册方向状态
     this.stateMachines.set(DIRECTION_ENUM.TOP, new State(fsm, `${PUBLIC_PATH}`))
+    this.stateMachines.set(DIRECTION_ENUM.LEFT, new State(fsm, `${PUBLIC_PATH}`))
+    this.stateMachines.set(DIRECTION_ENUM.BOTTOM, new State(fsm, `${PUBLIC_PATH}`))
+    this.stateMachines.set(DIRECTION_ENUM.RIGHT, new State(fsm, `${PUBLIC_PATH}`))
   }
 }
