@@ -7,6 +7,7 @@ import { Animation, _decorator } from 'cc'
 import { EntityManager } from '../../Base/EntityManager'
 import { getInitParamsNumebr, getInitParamsTrigger, StateMachine } from '../../Base/StateMachine'
 import { ENITIY_STATE_ENUM, PARAM_NAME_ENUM } from '../../Enum'
+import { AttackSubStateMachine } from './AttackSubStateMachine'
 import { IdleSubStateMachine } from './IdleSubStateMachine'
 const { ccclass, property } = _decorator
 
@@ -25,19 +26,21 @@ export class WoodenSkeletonStateMachine extends StateMachine {
   // 初始化参数(变量)列表
   initParams() {
     this.params.set(PARAM_NAME_ENUM.IDLE, getInitParamsTrigger())
+    this.params.set(PARAM_NAME_ENUM.ATTACK, getInitParamsTrigger())
     this.params.set(PARAM_NAME_ENUM.DIRECTION, getInitParamsNumebr())
   }
 
   // 初始化状态机列表(子状态机)
   initStateMachines() {
     this.stateMachines.set(ENITIY_STATE_ENUM.IDLE, new IdleSubStateMachine(this))
+    this.stateMachines.set(ENITIY_STATE_ENUM.ATTACK, new AttackSubStateMachine(this))
   }
 
   // 绑定一个动画事件,其他动画播放完成后，继续播放 idle动画
   initAnimationEvent() {
     this.animationComponent.on(Animation.EventType.FINISHED, () => {
       // 判断动画类型，使用 path 查找关键字
-      const whiteList = []
+      const whiteList = ['attack']
       const name = this.animationComponent.defaultClip.name
       if (whiteList.some(item => name.includes(item))) {
         this.node.getComponent(EntityManager).state = ENITIY_STATE_ENUM.IDLE
@@ -49,9 +52,12 @@ export class WoodenSkeletonStateMachine extends StateMachine {
   run() {
     switch (this.currentState) {
       case this.stateMachines.get(PARAM_NAME_ENUM.IDLE):
+      case this.stateMachines.get(PARAM_NAME_ENUM.ATTACK):
         // 修改 currentState 触发 State 本身的 run 方法
         if (this.getParams(PARAM_NAME_ENUM.IDLE)) {
           this.currentState = this.stateMachines.get(PARAM_NAME_ENUM.IDLE)
+        } if (this.getParams(PARAM_NAME_ENUM.ATTACK)) {
+          this.currentState = this.stateMachines.get(PARAM_NAME_ENUM.ATTACK)
         } else {
           this.currentState = this.currentState
         }

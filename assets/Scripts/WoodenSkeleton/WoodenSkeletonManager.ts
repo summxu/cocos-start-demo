@@ -4,7 +4,7 @@
 * @Last Modified time: 2023-06-20 14:58:23
 */
 
-import { _decorator } from "cc";
+import { cclegacy, _decorator } from "cc";
 import { EntityManager } from "../../Base/EntityManager";
 import { DIRECTION_ENUM, ENITIY_STATE_ENUM, ENITIY_TYPE_ENUM, EVENT_ENUM } from "../../Enum";
 import DataManager from "../../Runtime/DataManage";
@@ -20,16 +20,31 @@ export class WoodenSkeletonManager extends EntityManager {
     await this.fsm.init(); // 先加载完动画资源
 
     super.init({
-      x: 7,
-      y: 7,
+      x: 2,
+      y: 4,
       state: ENITIY_STATE_ENUM.IDLE,
       direction: DIRECTION_ENUM.TOP,
       type: ENITIY_TYPE_ENUM.ENEMIES
     })
 
     EventManage.Instance.on(EVENT_ENUM.MOVE_OVER, this.seePlayHandle, this)
+    EventManage.Instance.on(EVENT_ENUM.MOVE_OVER, this.attackHandle, this)
     EventManage.Instance.on(EVENT_ENUM.PLAYER_FINISH, this.seePlayHandle, this)
     this.seePlayHandle()
+  }
+
+  // 根据玩家位置改变 attack
+  attackHandle() {
+    if (!DataManager.Instance.player) return
+    const { x: playerX, y: playerY } = DataManager.Instance.player
+    // 判断距离怪物的相对位置
+    const [relativeX, relativeY] = [Math.abs(playerX - this.x), Math.abs(playerY - this.y)]
+    console.log(relativeX, relativeY)
+    if (relativeX <= 1 && relativeY <= 1 && relativeX !== relativeY) {
+      this.state = ENITIY_STATE_ENUM.ATTACK
+    }else {
+      this.state = ENITIY_STATE_ENUM.IDLE
+    }
   }
 
   // 跟随玩家位置改变转向
