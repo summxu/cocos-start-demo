@@ -4,6 +4,7 @@ import levels from "../../Levels";
 import DataManager from "../../Runtime/DataManage";
 import EventManage from "../../Runtime/EventManage";
 import { createUINode } from "../../Utils";
+import { DoorManager } from "../Door/DoorManager";
 import { PlayerManage } from "../Player/PlayerManage";
 import { TILE_HEIGHT, TILE_WIDTH } from "../Tile/TileManage";
 import { TileMapManage } from "../Tile/TileMapManage";
@@ -38,6 +39,7 @@ export class BattleManage extends Component {
     this.generateTileMap();
     this.generatePlayer();
     this.generateEnemies()
+    this.generateDoor()
   }
 
   // 下一关执行的方法
@@ -75,6 +77,15 @@ export class BattleManage extends Component {
     await woodenSkeletonManager.init();
 
     DataManager.Instance.enemies.push(woodenSkeletonManager)
+  }
+
+  async generateDoor() {
+    const door = createUINode();
+    door.setParent(this.stage);
+    const doorManager = door.addComponent(DoorManager); // 往瓦片地图node上添加脚本组件
+    await doorManager.init();
+
+    DataManager.Instance.door = doorManager
   }
 
   generateTileMap() {
