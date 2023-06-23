@@ -8,6 +8,7 @@ import { EntityManager } from '../../Base/EntityManager'
 import { getInitParamsNumebr, getInitParamsTrigger, StateMachine } from '../../Base/StateMachine'
 import { ENITIY_STATE_ENUM, PARAM_NAME_ENUM } from '../../Enum'
 import { AttackSubStateMachine } from './AttackSubStateMachine'
+import { DeathSubStateMachine } from './DeathSubStateMachine'
 import { IdleSubStateMachine } from './IdleSubStateMachine'
 const { ccclass, property } = _decorator
 
@@ -27,6 +28,7 @@ export class WoodenSkeletonStateMachine extends StateMachine {
   initParams() {
     this.params.set(PARAM_NAME_ENUM.IDLE, getInitParamsTrigger())
     this.params.set(PARAM_NAME_ENUM.ATTACK, getInitParamsTrigger())
+    this.params.set(PARAM_NAME_ENUM.DEATH, getInitParamsTrigger())
     this.params.set(PARAM_NAME_ENUM.DIRECTION, getInitParamsNumebr())
   }
 
@@ -34,6 +36,7 @@ export class WoodenSkeletonStateMachine extends StateMachine {
   initStateMachines() {
     this.stateMachines.set(ENITIY_STATE_ENUM.IDLE, new IdleSubStateMachine(this))
     this.stateMachines.set(ENITIY_STATE_ENUM.ATTACK, new AttackSubStateMachine(this))
+    this.stateMachines.set(ENITIY_STATE_ENUM.DEATH, new DeathSubStateMachine(this))
   }
 
   // 绑定一个动画事件,其他动画播放完成后，继续播放 idle动画
@@ -53,8 +56,11 @@ export class WoodenSkeletonStateMachine extends StateMachine {
     switch (this.currentState) {
       case this.stateMachines.get(PARAM_NAME_ENUM.IDLE):
       case this.stateMachines.get(PARAM_NAME_ENUM.ATTACK):
+      case this.stateMachines.get(PARAM_NAME_ENUM.DEATH):
         // 修改 currentState 触发 State 本身的 run 方法
-        if (this.getParams(PARAM_NAME_ENUM.IDLE)) {
+        if (this.getParams(PARAM_NAME_ENUM.DEATH)) {
+          this.currentState = this.stateMachines.get(PARAM_NAME_ENUM.DEATH)
+        } else if (this.getParams(PARAM_NAME_ENUM.IDLE)) {
           this.currentState = this.stateMachines.get(PARAM_NAME_ENUM.IDLE)
         } if (this.getParams(PARAM_NAME_ENUM.ATTACK)) {
           this.currentState = this.stateMachines.get(PARAM_NAME_ENUM.ATTACK)

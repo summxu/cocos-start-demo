@@ -10,11 +10,13 @@ import { Component, Sprite, UITransform, _decorator } from "cc";
 import { DIRECTION_ENUM, DIRECTION_ORDER_ENUM, ENITIY_STATE_ENUM, ENITIY_TYPE_ENUM, PARAM_NAME_ENUM } from "../Enum";
 import { IEntity } from "../Levels";
 import { TILE_HEIGHT, TILE_WIDTH } from "../Scripts/Tile/TileManage";
+import { randomBylen } from "../Utils";
 import { StateMachine } from "./StateMachine";
 const { ccclass, property } = _decorator;
 
 @ccclass("EntityManager")
 export class EntityManager extends Component {
+  id: string = randomBylen(12)
   fsm: StateMachine;
   // x,y表示当前位置
   x: number = 0;
@@ -66,4 +68,6 @@ export class EntityManager extends Component {
     const transform = this.getComponent(UITransform);
     transform.setContentSize(TILE_WIDTH * 4, TILE_HEIGHT * 4);
   }
+
+  onDestroy() { }
 }

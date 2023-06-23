@@ -8,6 +8,7 @@ import { EntityManager } from '../../Base/EntityManager'
 import { getInitParamsNumebr, getInitParamsTrigger, StateMachine } from '../../Base/StateMachine'
 import { ENITIY_STATE_ENUM, PARAM_NAME_ENUM } from '../../Enum'
 import { AirDeathSubStateMachine } from './AirDeathSubStateMachine'
+import { AttackSubStateMachine } from './AttackSubStateMachine'
 import { BlockBackSubStateMachine } from './BlockBackSubStateMachine'
 import { BlockFrontSubStateMachine } from './BlockFrontSubStateMachine'
 import { BlockLeftSubStateMachine } from './BlockLeftSubStateMachine'
@@ -46,6 +47,7 @@ export class PlayerStateMachine extends StateMachine {
     this.params.set(PARAM_NAME_ENUM.BLOCKTURNRIGHT, getInitParamsTrigger())
     this.params.set(PARAM_NAME_ENUM.DEATH, getInitParamsTrigger())
     this.params.set(PARAM_NAME_ENUM.AIRDEATH, getInitParamsTrigger())
+    this.params.set(PARAM_NAME_ENUM.ATTACK, getInitParamsTrigger())
   }
 
   // 初始化状态机列表(子状态机)
@@ -61,13 +63,14 @@ export class PlayerStateMachine extends StateMachine {
     this.stateMachines.set(ENITIY_STATE_ENUM.BLOCKTURNRIGHT, new BlockTurnRightSubStateMachine(this))
     this.stateMachines.set(ENITIY_STATE_ENUM.DEATH, new DeathSubStateMachine(this))
     this.stateMachines.set(ENITIY_STATE_ENUM.AIRDEATH, new AirDeathSubStateMachine(this))
+    this.stateMachines.set(ENITIY_STATE_ENUM.ATTACK, new AttackSubStateMachine(this))
   }
 
   // 绑定一个动画事件,其他动画播放完成后，继续播放 idle动画
   initAnimationEvent() {
     this.animationComponent.on(Animation.EventType.FINISHED, () => {
       // 判断动画类型，使用 path 查找关键字
-      const whiteList = ['blockfront', 'blockback', 'blockleft', 'blockright', 'blocktrunleft', 'blocktrunright', 'turn']
+      const whiteList = ['blockfront', 'blockback', 'blockleft', 'blockright', 'blocktrunleft', 'blocktrunright', 'turn', 'attack']
       const name = this.animationComponent.defaultClip.name
       if (whiteList.some(item => name.includes(item))) {
         this.node.getComponent(EntityManager).state = ENITIY_STATE_ENUM.IDLE
@@ -89,8 +92,11 @@ export class PlayerStateMachine extends StateMachine {
       case this.stateMachines.get(PARAM_NAME_ENUM.BLOCKTURNRIGHT):
       case this.stateMachines.get(PARAM_NAME_ENUM.DEATH):
       case this.stateMachines.get(PARAM_NAME_ENUM.AIRDEATH):
+      case this.stateMachines.get(PARAM_NAME_ENUM.ATTACK):
         // 修改 currentState 触发 State 本身的 run 方法
-        if (this.getParams(PARAM_NAME_ENUM.AIRDEATH)) {
+        if (this.getParams(PARAM_NAME_ENUM.ATTACK)) {
+          this.currentState = this.stateMachines.get(PARAM_NAME_ENUM.ATTACK)
+        } else if (this.getParams(PARAM_NAME_ENUM.AIRDEATH)) {
           this.currentState = this.stateMachines.get(PARAM_NAME_ENUM.AIRDEATH)
         } else if (this.getParams(PARAM_NAME_ENUM.DEATH)) {
           this.currentState = this.stateMachines.get(PARAM_NAME_ENUM.DEATH)

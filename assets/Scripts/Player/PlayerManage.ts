@@ -4,7 +4,7 @@
 * @Last Modified time: 2023-06-20 14:58:23
 */
 
-import { _decorator } from "cc";
+import { Sorting, _decorator } from "cc";
 import { EntityManager } from "../../Base/EntityManager";
 import { DIRECTION_ENUM, ENITIY_STATE_ENUM, ENITIY_TYPE_ENUM, EVENT_ENUM, PLAYER_CTRL_ENUM } from "../../Enum";
 import DataManager from "../../Runtime/DataManage";
@@ -39,6 +39,11 @@ export class PlayerManage extends EntityManager {
 
     EventManage.Instance.on(EVENT_ENUM.PLAYER_CTRL, this.inputHandle, this);
     EventManage.Instance.on(EVENT_ENUM.ENEMIES_ATTACK, this.deathHandle, this);
+  }
+
+  onDestroy() {
+    EventManage.Instance.off(EVENT_ENUM.PLAYER_CTRL, this.inputHandle);
+    EventManage.Instance.off(EVENT_ENUM.ENEMIES_ATTACK, this.deathHandle);
   }
 
   update() {
@@ -81,11 +86,22 @@ export class PlayerManage extends EntityManager {
 
   inputHandle(direct: PLAYER_CTRL_ENUM) {
     if (this.isMoveing) return
-    // 死亡的时候不能移动
-    if (this.state === ENITIY_STATE_ENUM.DEATH || this.state === ENITIY_STATE_ENUM.AIRDEATH) {
+    // 死亡,攻击的时候不能移动
+    if (
+      this.state === ENITIY_STATE_ENUM.DEATH ||
+      this.state === ENITIY_STATE_ENUM.AIRDEATH ||
+      this.state === ENITIY_STATE_ENUM.ATTACK
+    ) {
       return
     }
     if (this.willBlock(direct)) return
+    // 判断前方是否有怪物
+    const enemiesId = this.hasEnemies(direct)
+    if (enemiesId) {
+      EventManage.Instance.emit(EVENT_ENUM.PLAYER_ATTACK, enemiesId)
+      this.state = ENITIY_STATE_ENUM.ATTACK
+      return
+    }
     this.move(direct)
   }
 
@@ -128,6 +144,44 @@ export class PlayerManage extends EntityManager {
       }
       EventManage.Instance.emit(EVENT_ENUM.MOVE_OVER)
     }
+  }
+
+  hasEnemies(direct: PLAYER_CTRL_ENUM): string {
+    // 找到没死的敌人
+    const enemies = DataManager.Instance.enemies
+      .filter(item => item.state !== ENITIY_STATE_ENUM.DEATH)
+
+    for (let index = 0; index < enemies.length; index++) {
+      const element = enemies[index];
+      // 判断前方是否有敌人，并且是存活者的
+      if (direct === this.direction as unknown as PLAYER_CTRL_ENUM) {
+        if (direct === PLAYER_CTRL_ENUM.TOP) {
+          const next2Y = this.targetY - 2
+          if (element.x === this.targetX && element.y === next2Y) {
+            return element.id
+          }
+        }
+        if (direct === PLAYER_CTRL_ENUM.RIGHT) {
+          const next2X = this.targetX + 2
+          if (element.x === next2X && element.y === this.targetY) {
+            return element.id
+          }
+        }
+        if (direct === PLAYER_CTRL_ENUM.BOTTOM) {
+          const next2Y = this.targetY + 2
+          if (element.x === this.targetX && element.y === next2Y) {
+            return element.id
+          }
+        }
+        if (direct === PLAYER_CTRL_ENUM.LEFT) {
+          const next2X = this.targetX - 2
+          if (element.x === next2X && element.y === this.targetY) {
+            return element.id
+          }
+        }
+      }
+    }
+    return ''
   }
 
   // 碰撞判断

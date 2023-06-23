@@ -28,3 +28,7 @@ export const sortSpriteFrame = (list: SpriteFrame[]) => {
     return getNumberWithinString(a.name) - getNumberWithinString(b.name)
   })
 }
+
+export const randomBylen = (len: number) => {
+  return Array.from({ length: len }).reduce<string>((total: string, _) => { return total + Math.floor(Math.random() * 10) }, '')
+}

@@ -30,12 +30,28 @@ export class WoodenSkeletonManager extends EntityManager {
     EventManage.Instance.on(EVENT_ENUM.MOVE_OVER, this.seePlayHandle, this)
     EventManage.Instance.on(EVENT_ENUM.MOVE_OVER, this.attackHandle, this)
     EventManage.Instance.on(EVENT_ENUM.PLAYER_FINISH, this.seePlayHandle, this)
+    EventManage.Instance.on(EVENT_ENUM.PLAYER_ATTACK, this.deathHandle, this)
     this.seePlayHandle()
+  }
+
+  onDestroy() {
+    super.onDestroy()
+    EventManage.Instance.off(EVENT_ENUM.MOVE_OVER, this.seePlayHandle)
+    EventManage.Instance.off(EVENT_ENUM.MOVE_OVER, this.attackHandle)
+    EventManage.Instance.off(EVENT_ENUM.PLAYER_FINISH, this.seePlayHandle)
+    EventManage.Instance.off(EVENT_ENUM.PLAYER_ATTACK, this.deathHandle)
+  }
+
+  // 骷髅死亡
+  deathHandle(attackId: string) {
+    if (attackId !== this.id) return
+    if (this.state === ENITIY_STATE_ENUM.DEATH) return
+    this.state = ENITIY_STATE_ENUM.DEATH
   }
 
   // 根据玩家位置改变 attack
   attackHandle() {
-    if (!DataManager.Instance.player) return
+    if (!DataManager.Instance.player || this.state === ENITIY_STATE_ENUM.DEATH) return
     const { x: playerX, y: playerY } = DataManager.Instance.player
     // 判断距离怪物的相对位置
     const [relativeX, relativeY] = [Math.abs(playerX - this.x), Math.abs(playerY - this.y)]
@@ -50,7 +66,7 @@ export class WoodenSkeletonManager extends EntityManager {
 
   // 跟随玩家位置改变转向
   seePlayHandle() {
-    if (!DataManager.Instance.player) return
+    if (!DataManager.Instance.player || this.state === ENITIY_STATE_ENUM.DEATH) return
     const { x: playerX, y: playerY } = DataManager.Instance.player
     // 判断距离怪物的相对位置
     const [relativeX, relativeY] = [Math.abs(playerX - this.x), Math.abs(playerY - this.y)]
