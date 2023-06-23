@@ -21,7 +21,7 @@ export class WoodenSkeletonManager extends EntityManager {
 
     super.init({
       x: 2,
-      y: 4,
+      y: 5,
       state: ENITIY_STATE_ENUM.IDLE,
       direction: DIRECTION_ENUM.TOP,
       type: ENITIY_TYPE_ENUM.ENEMIES
@@ -39,10 +39,11 @@ export class WoodenSkeletonManager extends EntityManager {
     const { x: playerX, y: playerY } = DataManager.Instance.player
     // 判断距离怪物的相对位置
     const [relativeX, relativeY] = [Math.abs(playerX - this.x), Math.abs(playerY - this.y)]
-    console.log(relativeX, relativeY)
     if (relativeX <= 1 && relativeY <= 1 && relativeX !== relativeY) {
       this.state = ENITIY_STATE_ENUM.ATTACK
-    }else {
+      // 发送攻击事件
+      EventManage.Instance.emit(EVENT_ENUM.ENEMIES_ATTACK, ENITIY_STATE_ENUM.AIRDEATH)
+    } else {
       this.state = ENITIY_STATE_ENUM.IDLE
     }
   }

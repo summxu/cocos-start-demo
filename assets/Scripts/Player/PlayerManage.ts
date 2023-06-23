@@ -10,6 +10,7 @@ import { DIRECTION_ENUM, ENITIY_STATE_ENUM, ENITIY_TYPE_ENUM, EVENT_ENUM, PLAYER
 import DataManager from "../../Runtime/DataManage";
 import EventManage from "../../Runtime/EventManage";
 import { TileManage } from "../Tile/TileManage";
+import { ControllerManage } from "../UI/ControllerManage";
 import { PlayerStateMachine } from "./PlayerStateMachine";
 const { ccclass, property } = _decorator;
 
@@ -37,6 +38,7 @@ export class PlayerManage extends EntityManager {
     this.targetY = this.y
 
     EventManage.Instance.on(EVENT_ENUM.PLAYER_CTRL, this.inputHandle, this);
+    EventManage.Instance.on(EVENT_ENUM.ENEMIES_ATTACK, this.deathHandle, this);
   }
 
   update() {
@@ -73,7 +75,16 @@ export class PlayerManage extends EntityManager {
     }
   }
 
+  deathHandle(type: ENITIY_STATE_ENUM.DEATH | ENITIY_STATE_ENUM.AIRDEATH) {
+    this.state = type
+  }
+
   inputHandle(direct: PLAYER_CTRL_ENUM) {
+    if (this.isMoveing) return
+    // 死亡的时候不能移动
+    if (this.state === ENITIY_STATE_ENUM.DEATH || this.state === ENITIY_STATE_ENUM.AIRDEATH) {
+      return
+    }
     if (this.willBlock(direct)) return
     this.move(direct)
   }
